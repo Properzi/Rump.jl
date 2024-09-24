@@ -7,7 +7,7 @@ Rump is developed...bla bla
 module Rump
 
 
-include(imports.jl)
+include("imports.jl")
 const VERSION_NUMBER = VersionNumber(TOML.parsefile(joinpath(@__DIR__, "Project.toml"))["version"])
 
 export greet_Rump
