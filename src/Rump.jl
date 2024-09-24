@@ -1,5 +1,7 @@
 module Rump
 
-# Write your package code here.
+export greet_Rump
+include("functions.jl")
+
 
 end
