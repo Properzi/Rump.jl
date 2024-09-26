@@ -18,7 +18,7 @@ export >=
 export >
 export rand_elem
 export elements
-export uspset
+export upset
 export downset
 export is_sharp
 export is_symmetric
