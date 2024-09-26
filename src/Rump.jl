@@ -5,6 +5,8 @@ include("exports.jl")
 include("imports.jl")
 include("functions.jl")
 include("LAlgebras.jl")
+include("data/reads.jl")
+include("data/exports.jl")
 
 
 end #end of the Rump module
