@@ -3,6 +3,9 @@ uuid = "961f73fb-345b-40bd-b0bb-12c52a994620"
 authors = ["Carsten Dietzel", "Lukas Gutbrunner", "Silvia Properzi", "Leandro Vendramin"]
 version = "1.0.0-DEV"
 
+[deps]
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+
 [compat]
 julia = "1"
 

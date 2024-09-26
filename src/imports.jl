@@ -1,10 +1,6 @@
-#standard packages
-#using Pkg
-#using Random
-#using RandomExtensions
-#using UUIDs
 
 #OSCAR packages?
+#GAP enviroment
 
 
 # import stuff from Base for which we want to provide extra methods
