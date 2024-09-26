@@ -338,3 +338,260 @@ function elements(a::LAlgebra)
     n = size(a)
     return [LAlgebraElem(a,y) for y in 1:n]
 end
+
+"""
+    upset(x::LAlgebraElem)
+
+Given an element x of an L-algebra A,
+returns a vector with of all the elements in A that are bigger than x.
+# Examples
+```julia-repl
+julia> a = LAlgebra([2 2; 1 2]);
+julia> upset(a)
+2-element Vector{LAlgebraElem}:
+ LAlgebraElem(LAlgebra([2 2; 1 2]), 1)
+ LAlgebraElem(LAlgebra([2 2; 1 2]), 2)
+```
+"""
+function upset(x::LAlgebraElem)
+    a = x.algebra
+    return [y for y in a if y >= x]
+end
+
+function downset(x::LAlgebraElem)
+    a = x.algebra
+    return [y for y in a if y <= x]
+end
+
+
+function is_sharp(a::LAlgebra)
+    for x in a, y in a 
+        if x * y != x* (x * y)
+            return false
+        end
+    end
+    return true
+end
+
+
+function is_symmetric(a::LAlgebra)
+    for x in a, y in a  
+        if x * y == y && y * x != x
+            return false
+        end
+    end
+    return true
+end
+
+
+
+function is_abelian(a::LAlgebra)
+    for x in a, y in a, z in a, t in a
+        if (x * y) * ( z * t ) != ( x * z ) * ( y * t )
+            return false
+        end
+    end
+    return true
+end
+
+
+function is_linear(a::LAlgebra)
+    for x in a, y in a
+        if !(x <= y) || !( x >= y )
+            return false
+        end
+    end
+    return true
+end
+
+
+function is_discrete(a::LAlgebra)
+    lu = logical_unit(a)
+    for x in a, y in a
+        if (x <= y) && ( x != y ) && (y != lu)
+            return false
+        end
+    end
+    return true
+end
+
+function is_semiregular(a::LAlgebra)
+    for x in a, y in a, z in a
+        if ((x * y) * z) * ((y * x) * z) != ((x * y) * z) * z
+            return false
+        end
+    end
+    return true
+end
+
+
+
+function is_regular(a::LAlgebra)
+    if !(is_semiregular(a))
+        return false
+    end
+    for x in a, y in a
+        if (x <= y) && count(z * x == y for z in a) == 0
+            return false
+        end
+    end
+    return true
+end
+
+function is_hilbert(a::LAlgebra)
+    for x in a, y in a, z in a
+        if (x * (y * z)) != (x * y) * (x * z)
+            return false
+        end
+    end
+    return true
+end
+
+function is_dualBCK(a::LAlgebra)
+    for x in a, y in a, z in a
+        if (x * (y * z)) != (y * x) * z
+            return false
+        end
+    end
+    return true
+end
+
+function is_KL(a::LAlgebra)
+    for x in a, y in a
+        if !(x <= (y * x))
+            return false
+        end
+    end
+    return true
+end
+
+function is_CL(a::LAlgebra)
+    lu = logical_unit(a)
+    for x in a, y in a, z in a
+        if (x * (y * z)) * (y * (x * z)) != lu
+            return false
+        end
+    end
+    return true
+end
+
+function is_prime_element(p::LAlgebraElem) #logical unit is not prime
+    a = p.algebra
+    lu = logical_unit(a)
+    if p == lu
+        return false
+    end
+    for x in a
+        if !(x <= p || x * p == p)
+        return false
+        end
+    end
+    return true
+end
+
+function prime_elements(a::LAlgebra)
+    E = elements(a)
+    return filter(x -> is_prime_element(x), E)
+end
+
+function is_prime(a::LAlgebra)
+    lu = logical_unit(a)
+    for x in a
+        if x!=lu && !is_prime_element(x)
+            return false
+        end
+    end
+    return true
+end
+
+function is_subLalgebra(s::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}}, a::LAlgebra)
+    if !(issubset(s,a))
+        return error("not a subset")
+    end
+    lu = logical_unit(a)
+    if !(lu in s)
+        return false
+    end
+    for x in s, y in s
+        if !(x * y in s)
+            return false
+        end
+    end
+    return true
+end
+
+
+function is_invariant(s::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}}, a::LAlgebra)
+    if !(issubset(s,a))
+        return error("not a subset")
+    end
+    for x in a, y in s
+        if !(x * y in s)
+            return false
+        end
+    end
+    return true
+end
+
+function is_ideal(s::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}}, a::LAlgebra)
+    if !(issubset(s,a))
+        return error("not a subset")
+    end
+    lu = logical_unit(a)
+    if !(lu in s)
+        return false
+    end
+    for x in s, y in a
+        if x * y in s && !(y in s)
+            return false
+        end
+        if !((x * y) * y in s)
+            return false
+        end
+        if !(y * x in s || y * (x * y) in s)
+            return false
+        end
+    end
+    return true
+end
+
+function subLalgebra_generated_by(S::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}}, a::LAlgebra)
+    T = Set([logical_unit(a)])
+    S = Set(S)
+    if length(S) == 0
+        return T
+    end
+    while length(S) != 0
+        union!(T,S)
+        S = setdiff(union(T*S,S*T), T)
+    end
+    return T
+end
+
+function ideal_generated_by(S::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}}, a::LAlgebra)
+    T = Set([logical_unit(a)])
+    S = Set(S)
+    L = elements(a)
+    if length(S) == 0
+        return T
+    end
+    while length(S) != 0
+        union!(T,S)
+        S1 = copy(S)
+        for y in L
+        S1 = union(S1,(S*y)*y, y*(y*S))
+        end
+        S = union(S1, L*S) # L*S contains S
+        for x in S, y in setdiff(L, S)
+            if x * y in S 
+                push!(S, y)
+            end
+        end
+        setdiff!(S, T)
+    end
+    return T
+end
+
+function ideal_generated_by(x::LAlgebraElem, a::LAlgebra)
+    return ideal_generated_by([x],a)
+end
