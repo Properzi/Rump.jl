@@ -39,3 +39,6 @@ export is_invariant
 export is_ideal
 export subLalgebra_generated_by
 export ideal_generated_by
+export dirprod
+export direct_product
+export normal_form

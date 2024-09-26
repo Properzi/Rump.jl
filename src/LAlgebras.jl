@@ -849,3 +849,45 @@ end
 function ideal_generated_by(x::LAlgebraElem, a::LAlgebra)
     return ideal_generated_by([x],a)
 end
+
+
+function dirprod(L::LAlgebra,M::LAlgebra)
+    n = size(L)
+    m = size(M)
+    s = m*n
+    if n == 1 return M 
+    end
+    if m == 1 return L
+    end
+    A = zeros(Int,s,s)
+    for a1 in L, a2 in L, b1 in M, b2 in M
+        a = (a1*a2).value
+        b = (b1*b2).value
+        A[m*(a1.value -1)+b1.value ,m*(a2.value -1)+b2.value ] = m*(a-1)+b
+    end
+    return LAlgebra(A)
+end
+
+
+function direct_product((arg::LAlgebra)...)
+    LA = LAlgebra([1;;])
+    for (i,a) in enumerate(arg)
+        LA = dirprod(LA,a)
+    end
+    return LA
+end
+
+
+function normal_form(a::LAlgebra) # order of indices fits in the order of LAlgebra
+    M = a.matrix
+    n = size(a)
+    lu = M[1,1]
+
+    c = [count(M[i,j] == lu for i in 1:n) for j in 1:n]
+    v = sortperm(c)
+    j = invperm(v)
+
+    N = j[M[v,v]]
+
+    return LAlgebra(N)
+end
