@@ -20,4 +20,5 @@ size(a::LAlgebra)
 logical_unit
 rand_elem
 elements
+uspset
 ```

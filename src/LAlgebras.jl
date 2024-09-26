@@ -96,7 +96,7 @@ See also [`LAlgebra`](@ref).
 
 # Examples
 ```jldoctest
-julia> A = LAlgebra([2 2; 1 2]);
+julia> a = LAlgebra([2 2; 1 2]);
 julia> LAlgebraElem(A, 2)
 LAlgebraElem(LAlgebra([2 2; 1 2]), 2)
 ```
@@ -142,21 +142,25 @@ When applied to L-algebra elements of the same L-algebra,
 multiplies them in the L-algebra.
 # Examples
 ```jldoctest
-julia> A = LAlgebra([2 2; 1 2]);
+julia> a = LAlgebra([2 2; 1 2]);
+julia> b = LAlgebra([3 1 3; 3 3 3; 1 2 3]);
 
-julia> LAlgebraElem(A,2)*LAlgebraElem(A,1)
+julia> LAlgebraElem(a,2)*LAlgebraElem(b,2);
+ERROR: elements not in the same LAlgebra
+
+julia> LAlgebraElem(a,2)*LAlgebraElem(a,1)
 LAlgebraElem(LAlgebra([2 2; 1 2]), 1)
 
-julia> LAlgebraElem(A,1)*LAlgebraElem(A,1)*LAlgebraElem(A,1)
+julia> LAlgebraElem(a,1)*LAlgebraElem(a,1)*LAlgebraElem(a,1)
 LAlgebraElem(LAlgebra([2 2; 1 2]), 1)
 
-julia> LAlgebraElem(A,1)*(LAlgebraElem(A,1)*LAlgebraElem(A,1))
+julia> LAlgebraElem(a,1)*(LAlgebraElem(a,1)*LAlgebraElem(a,1))
 LAlgebraElem(LAlgebra([2 2; 1 2]), 2)
 ```
 """
 function *(x::LAlgebraElem, y::LAlgebraElem)
     if x.algebra != y.algebra 
-        return error("elements not in the same LAlgebra")
+        return error("elements not in the same L-algebra")
     end
     res = x.algebra.matrix[x.value, y.value]
     return LAlgebraElem(x.algebra, res)
@@ -343,13 +347,12 @@ end
     upset(x::LAlgebraElem)
 
 Given an element x of an L-algebra A,
-returns a vector with of all the elements in A that are bigger than x.
+return a vector with of all the elements in A that are bigger than x.
 # Examples
 ```julia-repl
 julia> a = LAlgebra([2 2; 1 2]);
 julia> upset(a)
-2-element Vector{LAlgebraElem}:
- LAlgebraElem(LAlgebra([2 2; 1 2]), 1)
+1-element Vector{LAlgebraElem}:
  LAlgebraElem(LAlgebra([2 2; 1 2]), 2)
 ```
 """
@@ -358,12 +361,36 @@ function upset(x::LAlgebraElem)
     return [y for y in a if y >= x]
 end
 
+"""
+    downset(x::LAlgebraElem)
+
+Given an element x of an L-algebra A,
+return a vector with of all the elements in A that are bigger than x.
+# Examples
+```julia-repl
+julia> a = LAlgebra([2 2; 1 2]);
+julia> downset(x)
+2-element Vector{LAlgebraElem}:
+ LAlgebraElem(LAlgebra([2 2; 1 2]), 1)
+ LAlgebraElem(LAlgebra([2 2; 1 2]), 2)
+ ```
+"""
 function downset(x::LAlgebraElem)
     a = x.algebra
     return [y for y in a if y <= x]
 end
 
+"""
+    is_sharp(a::LAlgebra)
 
+Check if A is a sharp L-algebra
+# Examples
+```julia-repl
+julia> A = LAlgebra([2 2; 1 2]);
+julia> is_sharp(A)
+true
+ ```
+"""
 function is_sharp(a::LAlgebra)
     for x in a, y in a 
         if x * y != x* (x * y)
@@ -373,7 +400,17 @@ function is_sharp(a::LAlgebra)
     return true
 end
 
+"""
+    is_symmetric(a::LAlgebra)
 
+Check if A is a symmetric L-algebra
+# Examples
+```julia-repl
+julia> A = LAlgebra([2 2; 1 2]);
+julia> is_symmetric(A)
+true
+ ```
+"""
 function is_symmetric(a::LAlgebra)
     for x in a, y in a  
         if x * y == y && y * x != x
@@ -384,7 +421,17 @@ function is_symmetric(a::LAlgebra)
 end
 
 
+"""
+    is_abelian(a::LAlgebra)
 
+Check if A is an abelian L-algebra
+# Examples
+```julia-repl
+julia> A = LAlgebra([2 2; 1 2]);
+julia> is_abelian(A)
+false
+ ```
+"""
 function is_abelian(a::LAlgebra)
     for x in a, y in a, z in a, t in a
         if (x * y) * ( z * t ) != ( x * z ) * ( y * t )
@@ -394,7 +441,17 @@ function is_abelian(a::LAlgebra)
     return true
 end
 
+"""
+    is_linear(a::LAlgebra)
 
+Check if A is a linear L-algebra
+# Examples
+```julia-repl
+julia> A = LAlgebra([2 2; 1 2]);
+julia> is_linear(A)
+false
+ ```
+"""
 function is_linear(a::LAlgebra)
     for x in a, y in a
         if !(x <= y) || !( x >= y )
@@ -404,7 +461,17 @@ function is_linear(a::LAlgebra)
     return true
 end
 
+"""
+    is_discrete(a::LAlgebra)
 
+Check if A is a discrete L-algebra
+# Examples
+```julia-repl
+julia> A = LAlgebra([2 2; 1 2]);
+julia> is_discrete(A)
+false
+ ```
+"""
 function is_discrete(a::LAlgebra)
     lu = logical_unit(a)
     for x in a, y in a
@@ -415,6 +482,18 @@ function is_discrete(a::LAlgebra)
     return true
 end
 
+
+"""
+    is_semiregular(a::LAlgebra)
+
+Check if A is a semiregular L-algebra
+# Examples
+```julia-repl
+julia> A = LAlgebra([2 2; 1 2]);
+julia> is_semiregular(A)
+true
+ ```
+"""
 function is_semiregular(a::LAlgebra)
     for x in a, y in a, z in a
         if ((x * y) * z) * ((y * x) * z) != ((x * y) * z) * z
@@ -425,7 +504,17 @@ function is_semiregular(a::LAlgebra)
 end
 
 
+"""
+    is_regular(a::LAlgebra)
 
+Check if A is a regular L-algebra
+# Examples
+```julia-repl
+julia> A = LAlgebra([2 2; 1 2]);
+julia> is_regular(A)
+true
+ ```
+"""
 function is_regular(a::LAlgebra)
     if !(is_semiregular(a))
         return false
@@ -438,6 +527,18 @@ function is_regular(a::LAlgebra)
     return true
 end
 
+
+"""
+    is_hilbert(a::LAlgebra)
+
+Check if A is a hilbert L-algebra
+# Examples
+```julia-repl
+julia> A = LAlgebra([2 2; 1 2]);
+julia> is_hilbert(A)
+true
+ ```
+"""
 function is_hilbert(a::LAlgebra)
     for x in a, y in a, z in a
         if (x * (y * z)) != (x * y) * (x * z)
@@ -447,6 +548,17 @@ function is_hilbert(a::LAlgebra)
     return true
 end
 
+"""
+    is_dualBCK(a::LAlgebra)
+
+Check if A is a dualBCK-algebra
+# Examples
+```julia-repl
+julia> A = Lalgebra([2 2; 1 2]);
+julia> is_dualBCK(a)
+false
+ ```
+"""
 function is_dualBCK(a::LAlgebra)
     for x in a, y in a, z in a
         if (x * (y * z)) != (y * x) * z
@@ -456,6 +568,17 @@ function is_dualBCK(a::LAlgebra)
     return true
 end
 
+"""
+    is_KL(a::LAlgebra)
+
+Check if a is a KL-algebra
+# Examples
+```julia-repl
+julia> a = LAlgebra([2 2; 1 2]);
+julia> is_KL(a)
+true
+ ```
+"""
 function is_KL(a::LAlgebra)
     for x in a, y in a
         if !(x <= (y * x))
@@ -465,6 +588,17 @@ function is_KL(a::LAlgebra)
     return true
 end
 
+"""
+    is_CL(a::LAlgebra)
+
+Check if a is a KL-algebra
+# Examples
+```julia-repl
+julia> a = LAlgebra([2 2; 1 2]);
+julia> is_CL(a)
+true
+ ```
+"""
 function is_CL(a::LAlgebra)
     lu = logical_unit(a)
     for x in a, y in a, z in a
@@ -475,6 +609,19 @@ function is_CL(a::LAlgebra)
     return true
 end
 
+"""
+    is_prime_element(p::LAlgebraElem) 
+
+Check if p is a prime element of the L-algebra.
+# Examples
+```julia-repl
+julia> a = LAlgebra([2 2; 1 2]);
+julia> p = LAlgebraElem(A,1)
+true
+julia> n = LAlgebraElem(A,2)
+false
+ ```
+"""
 function is_prime_element(p::LAlgebraElem) #logical unit is not prime
     a = p.algebra
     lu = logical_unit(a)
@@ -489,11 +636,43 @@ function is_prime_element(p::LAlgebraElem) #logical unit is not prime
     return true
 end
 
+"""
+    prime_elements(a::LAlgebra) 
+
+Return a vector with all the prime elements of a 
+# Examples
+```julia-repl
+julia> a = LAlgebra([2 2; 1 2]);
+julia> prime_elements(a)
+1-element Vector{LAlgebraElem}:
+ LAlgebraElem(LAlgebra([2 2; 1 2]), 1)
+
+julia> b = LAlgebra([3 1 3; 3 3 3; 1 2 3]);
+julia> prime_elements(b)
+1-element Vector{LAlgebraElem}:
+ LAlgebraElem(LAlgebra([3 1 3; 3 3 3; 1 2 3]), 1)
+ ```
+"""
 function prime_elements(a::LAlgebra)
     E = elements(a)
     return filter(x -> is_prime_element(x), E)
 end
 
+"""
+    is_prime(a::LAlgebra)
+
+Check if a is a prime L-algebra
+# Examples
+```julia-repl
+julia> a = LAlgebra([2 2; 1 2]);
+julia> is_prime(a)
+true
+
+julia> b = LAlgebra([3 1 3; 3 3 3; 1 2 3]);
+julia> is_prime(b)
+false
+ ```
+"""
 function is_prime(a::LAlgebra)
     lu = logical_unit(a)
     for x in a
@@ -504,6 +683,20 @@ function is_prime(a::LAlgebra)
     return true
 end
 
+"""
+    is_subLalgebra(s::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}}, a::LAlgebra)
+ 
+Check if s (either a subset or a vector of eleemtns of a),
+     is a L-subalgebra of a.
+# Examples
+```julia-repl
+julia> a = LAlgebra([2 2; 1 2]);
+julia> is_subLalgebra([LAlgebraElem(a,1)],a)
+false
+julia> is_subLalgebra([LAlgebraElem(a,2)],a)
+true
+ ```
+"""
 function is_subLalgebra(s::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}}, a::LAlgebra)
     if !(issubset(s,a))
         return error("not a subset")
@@ -520,7 +713,20 @@ function is_subLalgebra(s::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}}, a::LA
     return true
 end
 
-
+"""
+    is_invariant(s::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}}, a::LAlgebra)
+ 
+Check if s (either a subset or a vector of eleemtns of a),
+     is closed under the operation of a.
+# Examples
+```julia-repl
+julia> a = LAlgebra([2 2; 1 2]);
+julia> is_invariant([LAlgebraElem(a,1)],a)
+false
+julia> is_invariant([LAlgebraElem(a,2)],a)
+true
+ ```
+"""
 function is_invariant(s::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}}, a::LAlgebra)
     if !(issubset(s,a))
         return error("not a subset")
@@ -533,6 +739,20 @@ function is_invariant(s::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}}, a::LAlg
     return true
 end
 
+"""
+    is_ideal(s::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}}, a::LAlgebra)
+ 
+Check if s (either a subset or a vector of eleemtns of a),
+     is an ideal of a.
+# Examples
+```julia-repl
+julia> a = LAlgebra([2 2; 1 2]);
+julia> is_ideal([LAlgebraElem(a,1)],a)
+false
+julia> is_ideal([LAlgebraElem(a,2)],a)
+true
+ ```
+"""
 function is_ideal(s::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}}, a::LAlgebra)
     if !(issubset(s,a))
         return error("not a subset")
@@ -555,6 +775,23 @@ function is_ideal(s::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}}, a::LAlgebra
     return true
 end
 
+"""
+    subLalgebra_generated_by(s::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}}, a::LAlgebra)
+ 
+Return the L-subalgebra of a generated by the subset (or the elements in the vector) s.
+# Examples
+```julia-repl
+julia> a = LAlgebra([2 2; 1 2]);
+julia> subLalgebra_generated_by([LAlgebraElem(a,1)],a)
+Set{LAlgebraElem} with 2 elements:
+  LAlgebraElem(LAlgebra([2 2; 1 2]), 1)
+  LAlgebraElem(LAlgebra([2 2; 1 2]), 2)
+
+julia> subLalgebra_generated_by([LAlgebraElem(a,2)],a)
+Set{LAlgebraElem} with 1 element:
+  LAlgebraElem(LAlgebra([2 2; 1 2]), 2)
+ ```
+"""
 function subLalgebra_generated_by(S::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}}, a::LAlgebra)
     T = Set([logical_unit(a)])
     S = Set(S)
@@ -568,6 +805,23 @@ function subLalgebra_generated_by(S::Union{Set{LAlgebraElem}, Vector{LAlgebraEle
     return T
 end
 
+"""
+    ideal_generated_by(s::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}}, a::LAlgebra)
+ 
+Return the L-subalgebra of a generated by the subset (or the elements in the vector) s.
+# Examples
+```julia-repl
+julia> a = LAlgebra([2 2; 1 2]);
+julia> ideal_generated_by([LAlgebraElem(a,1)],a)
+Set{LAlgebraElem} with 2 elements:
+  LAlgebraElem(LAlgebra([2 2; 1 2]), 1)
+  LAlgebraElem(LAlgebra([2 2; 1 2]), 2)
+
+julia> ideal_generated_by([LAlgebraElem(a,2)],a)
+Set{LAlgebraElem} with 1 element:
+  LAlgebraElem(LAlgebra([2 2; 1 2]), 2)
+ ```
+"""
 function ideal_generated_by(S::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}}, a::LAlgebra)
     T = Set([logical_unit(a)])
     S = Set(S)

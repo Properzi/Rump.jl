@@ -18,5 +18,24 @@ export >=
 export >
 export rand_elem
 export elements
-
-
+export uspset
+export downset
+export is_sharp
+export is_symmetric
+export is_abelian
+export is_linear
+export is_discrete
+export is_semiregular
+export is_regular
+export is_hilbert
+export is_dualBCK
+export is_KL
+export is_CL
+export is_prime_element
+export prime_elements
+export is_prime
+export is_subLalgebra
+export is_invariant
+export is_ideal
+export subLalgebra_generated_by
+export ideal_generated_by
