@@ -1,6 +1,26 @@
 # Rump
 Rump is...
 
+Created with Pkg
+
+To use it
+1. start Julia from the package directory (.Rump)
+2. go to the package mode:
+```julia-repl
+    julia> ]
+    (Rump) pkg>
+```
+3. activate the package:
+```julia-repl
+    (Rump) pkg> activate .
+```
+4.  exit the pkg mode with backspace
+
+5. use the package:
+```julia-repl
+    julia> using Rump
+```
+
 The (provisorial) documentation is [here](https://htmlpreview.github.io/?https://github.com/Properzi/Rump.jl/blob/master/docs/build/index.html)
 
 
