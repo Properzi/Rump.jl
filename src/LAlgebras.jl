@@ -240,6 +240,64 @@ function !=(x::LAlgebraElem, y::LAlgebraElem)
 end 
 
 """
+    is_LAlgebraMor(M::Matrix)
+
+Check if 
+# Examples
+```julia-repl
+julia> 
+true
+
+julia> 
+false
+```
+"""
+function is_LAlgebraMor(domain::LAlgebra, codomain::LAlgebra, map::Vector{LAlgebraElem}) 
+    m = size(domain)
+    n = size(codomain)
+    if length(f) != m
+        return false
+    end
+
+    for i in 1:m
+        if !(f[i] in codomain)
+            return false
+        end
+    end
+
+    for i in 1:m, j in 1:m
+        x = LAlgebraElem(domain, i )
+        y = LAlgebraElem(domain, j)
+        if f[(x*y).value] != f[i] * f[j] 
+            return false
+        end
+    end
+    return true
+end
+
+
+"""
+    LAlgebraMor(a::LAlgebra, b::LAlgebra, map::Vector{LAlgebraElem})
+    LAlgebraMor(a::LAlgebra, b::LAlgebra, map::Vector{LAlgebraElem}, check=false)
+
+
+
+# Examples
+```jldoctest
+julia> 
+```
+"""
+mutable struct LAlgebraMor
+    domain::LAlgebra
+    codomain::LAlgebra
+    map::Vector{LAlgebraElem}
+    LAlgebra(matrix::Matrix ; check::Bool = false) = check ? 
+        ( is_LAlgebraMor(domain, codomain, map) ? 
+            new(map) : error("$map is not a L-algebra morphism") ) : new(map)
+end
+ 
+
+"""
     <=(x::LAlgebraElem, y::LAlgebraElem)
 
 Check if x≤y.
@@ -848,6 +906,34 @@ end
 
 function ideal_generated_by(x::LAlgebraElem, a::LAlgebra)
     return ideal_generated_by([x],a)
+end
+
+function spec(a::LAlgebra)
+    n = size(a)
+    l = []
+    for S in subsets(elements(a))
+        if is_ideal(S,a)
+        push!(l,S)
+        end
+    end
+    return l
+end
+
+function is_prime_ideal(p::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}}, a::LAlgebra)
+    if !is_ideal(p,a) || length(p) == size(a)
+        return false
+    end
+    S = spec(a)
+    for I in S
+        if !issubset(I,p) & !issubset(p*I,p)
+            return false
+        end
+    end
+    return true
+end
+
+function prime_spec(a::LAlgebra)
+    filter(p->is_prime_ideal(p,a), spec(a))
 end
 
 
