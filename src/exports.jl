@@ -10,6 +10,8 @@ export in
 export size
 export length
 export logical_unit
+export Is_LAlgebraMor
+export LAlgebraMOr
 export ==
 export !=
 export <=

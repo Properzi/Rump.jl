@@ -964,6 +964,8 @@ function direct_product((arg::LAlgebra)...)
 end
 
 
+
+
 function normal_form(a::LAlgebra) # order of indices fits in the order of LAlgebra
     M = a.matrix
     n = size(a)
