@@ -255,12 +255,12 @@ false
 function is_LAlgebraMor(domain::LAlgebra, codomain::LAlgebra, map::Vector{LAlgebraElem}) 
     m = size(domain)
     n = size(codomain)
-    if length(f) != m
+    if length(map) != m
         return false
     end
 
     for i in 1:m
-        if !(f[i] in codomain)
+        if !(map[i] in codomain)
             return false
         end
     end
@@ -268,7 +268,7 @@ function is_LAlgebraMor(domain::LAlgebra, codomain::LAlgebra, map::Vector{LAlgeb
     for i in 1:m, j in 1:m
         x = LAlgebraElem(domain, i )
         y = LAlgebraElem(domain, j)
-        if f[(x*y).value] != f[i] * f[j] 
+        if map[(x*y).value] != map[i] * map[j] 
             return false
         end
     end
@@ -937,16 +937,16 @@ function prime_spec(a::LAlgebra)
 end
 
 
-function dirprod(L::LAlgebra,M::LAlgebra)
-    n = size(L)
-    m = size(M)
-    s = m*n
-    if n == 1 return M 
+function dirprod(a::LAlgebra,b::LAlgebra)
+    n = size(a)
+    m = size(b)
+    s = m * n
+    if n == 1 return b 
     end
-    if m == 1 return L
+    if m == 1 return a
     end
     A = zeros(Int,s,s)
-    for a1 in L, a2 in L, b1 in M, b2 in M
+    for a1 in a, a2 in a, b1 in b, b2 in b
         a = (a1*a2).value
         b = (b1*b2).value
         A[m*(a1.value -1)+b1.value ,m*(a2.value -1)+b2.value ] = m*(a-1)+b
@@ -961,6 +961,33 @@ function direct_product((arg::LAlgebra)...)
         LA = dirprod(LA,a)
     end
     return LA
+end
+
+
+function is_action(a::LAlgebra,b::LAlgebra, rho::Vector{Vector{LAlgebraElem}})
+    n = size(a)
+    m = size(b)
+    
+    id = map(x->LAlgebraElem(b,x), 1:m)
+
+    for i in 1:n
+        t = rho[i]
+        if !is_LAlgebraMor(b,b,rho[i])
+            return error("$rho is not an action: $t is not an l-algebra morphism")
+        end
+    end
+
+    if rho[ua.value] != id 
+        return error("$rho is not an action: the logical unit does not act trivially")
+    end
+    for u in b, v in b, i in 1:m
+        x = rho[u.value][i]
+        y = rho[v.value][i]
+        if rho[(u*v).value][x.value] != rho[(v*u).value][y.value]
+            return error("$rho is not an action: witnesses $u and $v")
+        end
+    end
+    end
 end
 
 

@@ -10,8 +10,8 @@ export in
 export size
 export length
 export logical_unit
-export Is_LAlgebraMor
-export LAlgebraMOr
+export is_LAlgebraMor
+export LAlgebraMor
 export ==
 export !=
 export <=
@@ -43,4 +43,5 @@ export subLalgebra_generated_by
 export ideal_generated_by
 export dirprod
 export direct_product
+export is_action
 export normal_form
