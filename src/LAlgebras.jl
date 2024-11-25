@@ -947,11 +947,11 @@ function dirprod(a::LAlgebra,b::LAlgebra)
     end
     A = zeros(Int,s,s)
     for a1 in a, a2 in a, b1 in b, b2 in b
-        a = (a1*a2).value
-        b = (b1*b2).value
-        A[m*(a1.value -1)+b1.value ,m*(a2.value -1)+b2.value ] = m*(a-1)+b
+        c = (a1*a2).value
+        d = (b1*b2).value
+        A[m*(a1.value -1)+b1.value ,m*(a2.value -1)+b2.value ] = m*(c-1)+d
     end
-    return LAlgebra(A)
+    return LAlgebra(A) #do we want it in the normal_form?
 end
 
 
@@ -960,36 +960,71 @@ function direct_product((arg::LAlgebra)...)
     for (i,a) in enumerate(arg)
         LA = dirprod(LA,a)
     end
-    return LA
+    return LA #do we want it in the normal_form?
 end
 
 
-function is_action(a::LAlgebra,b::LAlgebra, rho::Vector{Vector{LAlgebraElem}})
-    n = size(a)
-    m = size(b)
-    
-    id = map(x->LAlgebraElem(b,x), 1:m)
+function endomorphisms(a::LAlgebra)
+	m=size(a)
+	en = []
+	for t in Iterators.product(ntuple(_ -> 1:m, m-1)...)
+		s=[i for i in t]
+		append!(s,m)
+		f=map(x->LAlgebraElem(a,s[x]),1:m)
+	if is_LAlgebraMor(a,a,f)
+		append!(en,[f])
+    end	
+	end
+return en
+end 
 
-    for i in 1:n
+function is_action(a::LAlgebra, b::LAlgebra, rho::Vector{Vector{LAlgebraElem}})
+	n = size(a)
+	m = size(b)
+	if length(rho) != n
+		return error("the length of rho is $length(rho) and the size of a is $n")
+	end
+	 
+	for i in 1:n
         t = rho[i]
         if !is_LAlgebraMor(b,b,rho[i])
             return error("$rho is not an action: $t is not an l-algebra morphism")
-        end
-    end
+     	end
+	end
 
-    if rho[ua.value] != id 
-        return error("$rho is not an action: the logical unit does not act trivially")
-    end
-    for u in b, v in b, i in 1:m
+	id = map(x->LAlgebraElem(b,x), 1:m)
+    	u = logical_unit(a)
+	if rho[u.value] != id 
+       	 return error("$rho is not an action: the logical unit does not act trivially")
+    	end
+
+    for u in a, v in a, i in 1:m
         x = rho[u.value][i]
         y = rho[v.value][i]
-        if rho[(u*v).value][x.value] != rho[(v*u).value][y.value]
+		if rho[(u*v).value][x.value] != rho[(v*u).value][y.value]
             return error("$rho is not an action: witnesses $u and $v")
-        end
-    end
-    end
+		end
+	end
+return true
 end
 
+function semidirect_prod(a::LAlgebra, b::LAlgebra, rho::Vector{Vector{LAlgebraElem}})
+	n = size(a)
+	m = size(b)
+	s = m * n
+	if !is_action(b, a, rho)
+		return error("$rho is not an action")
+	end
+	M = zeros(Int,s,s)
+	for a1 in a, a2 in a, b1 in b, b2 in b
+		l = rho[(b1*b2).value][a1.value]
+		r = rho[(b2*b1).value][a2.value]
+		c = (l*r).value
+		d = (b1*b2).value
+		M[m*(a1.value-1)+b1.value, m*(a2.value-1)+b2.value ] = m*(c-1)+d
+	end
+	return LAlgebra(M) #do we want it in the normal_form?
+end
 
 
 

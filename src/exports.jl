@@ -44,4 +44,6 @@ export ideal_generated_by
 export dirprod
 export direct_product
 export is_action
+export endomorphisms
+export semidirect_prod
 export normal_form
