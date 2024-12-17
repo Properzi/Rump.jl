@@ -29,8 +29,13 @@ end
     e = logical_unit(A)
     @test e == y
     @test x*x == x* e && x*e == e && e * x == x
-    #@test 
-    #@test 
-    #@test 
-    #@test 
+end
+
+@testset "spec" begin
+    M=[2 2; 1 2]
+    P=[3 1 3; 3 3 3; 1 2 3]
+    A = LAlgebra(M)
+    B=LAlgebra(P)
+
+    @test true
 end

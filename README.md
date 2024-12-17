@@ -1,5 +1,6 @@
 # Rump
-Rump is...
+
+Rump is a designed for the study of L-algebras. It provides tools for constructing L-algebras, checking their properties (e.g., primality, ideals, subalgebras), and performing algebraic operations such as direct products and semidirect products.
 
 Created with Pkg
 
