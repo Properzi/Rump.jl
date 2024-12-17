@@ -911,7 +911,7 @@ end
 function spec(a::LAlgebra)
     n = size(a)
     l = []
-    for S in subsets(elements(a))
+    for S in powerset(elements(a))
         if is_ideal(S,a)
         push!(l,S)
         end

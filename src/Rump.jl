@@ -1,5 +1,6 @@
 module Rump
 
+using Combinatorics
 include("imports.jl")
 include("exports.jl")
 include("functions.jl")
