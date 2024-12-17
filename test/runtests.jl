@@ -37,5 +37,7 @@ end
     A = LAlgebra(M)
     B=LAlgebra(P)
 
-    @test true
+    @test isempty(prime_spec(B))
+    @test isempty(prime_spec(A))
+    @test length(spec(A)) == length(spec(B)) == 2
 end
