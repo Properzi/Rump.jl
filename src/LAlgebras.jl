@@ -820,13 +820,17 @@ function is_ideal(s::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}}, a::LAlgebra
         return false
     end
     for x in s, y in a
-        if x * y in s && !(y in s)
+	z = x * y
+        if z in s && !(y in s)
             return false
         end
-        if !((x * y) * y in s)
+        if !(z * y in s)
             return false
         end
-        if !(y * x in s || y * (x * y) in s)
+	if !(y * x in s)
+           return false	
+	end
+        if !(y * z in s)
             return false
         end
     end
