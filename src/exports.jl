@@ -42,8 +42,11 @@ export is_ideal
 export subLalgebra_generated_by
 export ideal_generated_by
 export spec
+export onlyvalues_spec
+export ⋅
 export is_prime_ideal
-export prime_spec
+export ideals
+export onlyvalues_ideals
 export dirprod
 export direct_product
 export endomorphisms
