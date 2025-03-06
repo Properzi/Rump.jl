@@ -12,7 +12,7 @@ Permutations = "2ae35dd2-176d-5d53-8349-f30d82d94d4f"
 [compat]
 Combinatorics = "1.0.2"
 Documenter = "1"
-IterTools = "1.10.0"
+IterTools = "1.4.0"
 Permutations = "0.4.22"
 julia = "1"
 
