@@ -844,7 +844,6 @@ julia> subLalgebra_generated_by([LAlgebraElem(a,1)],a)
 Set{LAlgebraElem} with 2 elements:
   LAlgebraElem(LAlgebra([2 2; 1 2]), 1)
   LAlgebraElem(LAlgebra([2 2; 1 2]), 2)
-
 julia> subLalgebra_generated_by([LAlgebraElem(a,2)],a)
 Set{LAlgebraElem} with 1 element:
   LAlgebraElem(LAlgebra([2 2; 1 2]), 2)
@@ -874,7 +873,6 @@ julia> ideal_generated_by([LAlgebraElem(a,1)],a)
 Set{LAlgebraElem} with 2 elements:
   LAlgebraElem(LAlgebra([2 2; 1 2]), 1)
   LAlgebraElem(LAlgebra([2 2; 1 2]), 2)
-
 julia> ideal_generated_by([LAlgebraElem(a,2)],a)
 Set{LAlgebraElem} with 1 element:
   LAlgebraElem(LAlgebra([2 2; 1 2]), 2)
