@@ -7,12 +7,7 @@ Created with [Pkg](https://github.com/JuliaLang/julia)
 Features
 --------
 L-algebras
-* groups associated to finite racks and quandles 
-* complete list of non-isomorphic indecomposable quandles of order < 48 
-* rack and quandle homology
-* quandle colorings of knots
-* quandle 2-cocycle invariants of knots
-* Nelson's polynomials invariants
+* 
 
 Databases
 * L-algebras of size <8
