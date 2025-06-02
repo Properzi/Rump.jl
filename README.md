@@ -7,7 +7,8 @@ Created with [Pkg](https://github.com/JuliaLang/julia)
 Features
 --------
 L-algebras
-* 
+* prime elements, prime L-algebras, ideals and prime ideals
+* direct and semidirect products
 
 Databases
 * L-algebras of size <8
