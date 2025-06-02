@@ -1,6 +1,6 @@
 
 # Rump
-Rump is a Julia package for L-algebras (in future: cycle sets, skew braces, and set-theoretic solutions to YBE). The package is developed by Carsten Dietzel, Lukas Gutbrunner, Silvia Properzi and Leandro Vendramin.
+Rump is a Julia package for L-algebras (in future: cycle sets, rakcs, quandles, set-theoretic solutions to YBE, skew braces and all that). The package is developed by Carsten Dietzel, Lukas Gutbrunner, Silvia Properzi and Leandro Vendramin.
 
 Created with [Pkg](https://github.com/JuliaLang/julia)
 
