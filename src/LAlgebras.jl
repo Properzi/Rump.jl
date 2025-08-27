@@ -512,7 +512,7 @@ false
 """
 function is_linear(a::LAlgebra)
     for x in a, y in a
-        if !(x <= y) || !( x >= y )
+        if !(x <= y) && !( x >= y )
             return false
         end
     end
