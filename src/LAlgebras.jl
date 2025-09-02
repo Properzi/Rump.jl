@@ -212,11 +212,11 @@ end
  When applied to an L-algebra returns its cardinality.
  
  # Examples
- ```jldoctest
+```jldoctest
  julia> A = LAlgebra([2 2; 1 2]);
  julia> length(A)
  2
- ```
+```
  """ 
 Base.length(L::LAlgebra) = size(L)
 
@@ -224,7 +224,7 @@ Base.length(L::LAlgebra) = size(L)
     logical_unit(a::LAlgebra))
 
 Return the logical unit of the L-algebra a, i.e.
-the element u in a such that x*x=x*u=1 and 1*x=x for all x in a.
+the element u in a such that x*x=x*u=u and u*x=x for all x in a.
 """
 function logical_unit(a::LAlgebra)
     return LAlgebraElem(a, a.matrix[1,1])
@@ -457,7 +457,7 @@ julia> downset(x)
 2-element Vector{LAlgebraElem}:
  LAlgebraElem(LAlgebra([2 2; 1 2]), 1)
  LAlgebraElem(LAlgebra([2 2; 1 2]), 2)
- ```
+```
 """
 function downset(x::LAlgebraElem)
     a = x.algebra
@@ -473,7 +473,7 @@ Check if A is a sharp L-algebra
 julia> A = LAlgebra([2 2; 1 2]);
 julia> is_sharp(A)
 true
- ```
+```
 """
 function is_sharp(a::LAlgebra)
     for x in a, y in a 
@@ -493,7 +493,7 @@ Check if A is a symmetric L-algebra
 julia> A = LAlgebra([2 2; 1 2]);
 julia> is_symmetric(A)
 true
- ```
+```
 """
 function is_symmetric(a::LAlgebra)
     for x in a, y in a  
@@ -514,7 +514,7 @@ Check if A is an abelian L-algebra
 julia> A = LAlgebra([2 2; 1 2]);
 julia> is_abelian(A)
 false
- ```
+```
 """
 function is_abelian(a::LAlgebra)
     for x in a, y in a, z in a, t in a
@@ -534,7 +534,7 @@ Check if A is a linear L-algebra
 julia> A = LAlgebra([2 2; 1 2]);
 julia> is_linear(A)
 false
- ```
+```
 """
 function is_linear(a::LAlgebra)
     for x in a, y in a
@@ -554,7 +554,7 @@ Check if A is a discrete L-algebra
 julia> A = LAlgebra([2 2; 1 2]);
 julia> is_discrete(A)
 false
- ```
+```
 """
 function is_discrete(a::LAlgebra)
     lu = logical_unit(a)
@@ -576,7 +576,7 @@ Check if A is a semiregular L-algebra
 julia> A = LAlgebra([2 2; 1 2]);
 julia> is_semiregular(A)
 true
- ```
+```
 """
 function is_semiregular(a::LAlgebra)
     for x in a, y in a, z in a
@@ -597,7 +597,7 @@ Check if A is a regular L-algebra
 julia> A = LAlgebra([2 2; 1 2]);
 julia> is_regular(A)
 true
- ```
+```
 """
 function is_regular(a::LAlgebra)
     if !(is_semiregular(a))
@@ -621,7 +621,7 @@ Check if A is a hilbert L-algebra
 julia> A = LAlgebra([2 2; 1 2]);
 julia> is_hilbert(A)
 true
- ```
+```
 """
 function is_hilbert(a::LAlgebra)
     for x in a, y in a, z in a
@@ -641,7 +641,7 @@ Check if A is a dualBCK-algebra
 julia> A = Lalgebra([2 2; 1 2]);
 julia> is_dualBCK(A)
 false
- ```
+```
 """
 function is_dualBCK(a::LAlgebra)
     for x in a, y in a, z in a
@@ -661,7 +661,7 @@ Check if a is a KL-algebra
 julia> a = LAlgebra([2 2; 1 2]);
 julia> is_KL(a)
 true
- ```
+```
 """
 function is_KL(a::LAlgebra)
     for x in a, y in a
@@ -681,7 +681,7 @@ Check if a is a CL-algebra
 julia> a = LAlgebra([2 2; 1 2]);
 julia> is_CL(a)
 true
- ```
+```
 """
 function is_CL(a::LAlgebra)
     lu = logical_unit(a)
@@ -704,7 +704,7 @@ julia> p = LAlgebraElem(A,1)
 true
 julia> n = LAlgebraElem(A,2)
 false
- ```
+```
 """
 function is_prime_element(p::LAlgebraElem) #logical unit is not prime
     a = p.algebra
@@ -735,7 +735,7 @@ julia> b = LAlgebra([3 1 3; 3 3 3; 1 2 3]);
 julia> prime_elements(b)
 1-element Vector{LAlgebraElem}:
  LAlgebraElem(LAlgebra([3 1 3; 3 3 3; 1 2 3]), 1)
- ```
+```
 """
 function prime_elements(a::LAlgebra)
     E = elements(a)
@@ -755,7 +755,7 @@ true
 julia> b = LAlgebra([3 1 3; 3 3 3; 1 2 3]);
 julia> is_prime(b)
 false
- ```
+```
 """
 function is_prime(a::LAlgebra)
     lu = logical_unit(a)
@@ -779,7 +779,7 @@ julia> is_subLalgebra([LAlgebraElem(a,1)],a)
 false
 julia> is_subLalgebra([LAlgebraElem(a,2)],a)
 true
- ```
+```
 """
 function is_subLalgebra(s::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}}, a::LAlgebra)
     if !(issubset(s,a))
@@ -809,7 +809,7 @@ julia> is_invariant([LAlgebraElem(a,1)],a)
 false
 julia> is_invariant([LAlgebraElem(a,2)],a)
 true
- ```
+```
 """
 function is_invariant(s::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}}, a::LAlgebra)
     if !(issubset(s,a))
@@ -835,7 +835,7 @@ julia> is_ideal([LAlgebraElem(a,1)],a)
 false
 julia> is_ideal([LAlgebraElem(a,2)],a)
 true
- ```
+```
 """
 function is_ideal(s::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}}, a::LAlgebra)
     if !(issubset(s,a))
@@ -873,7 +873,7 @@ Set{LAlgebraElem} with 2 elements:
 julia> subLalgebra_generated_by([LAlgebraElem(a,2)],a)
 Set{LAlgebraElem} with 1 element:
   LAlgebraElem(LAlgebra([2 2; 1 2]), 2)
- ```
+```
 """
 function subLalgebra_generated_by(S::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}}, a::LAlgebra)
     T = Set([logical_unit(a)])
@@ -902,7 +902,7 @@ Set{LAlgebraElem} with 2 elements:
 julia> ideal_generated_by([LAlgebraElem(a,2)],a)
 Set{LAlgebraElem} with 1 element:
   LAlgebraElem(LAlgebra([2 2; 1 2]), 2)
- ```
+```
 """
 function ideal_generated_by(S::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}}, a::LAlgebra)
     T = Set([logical_unit(a)])
