@@ -1,7 +1,7 @@
 
 export greet_Rump
-export check_LAlgebra
-export LAlgebra
+export check_l_algebra
+export l_algebra
 export l_algebra_element
 export print
 export ==
@@ -14,6 +14,7 @@ export logical_unit
 export !=
 export is_l_algebra_morphism
 export l_algebra_morphism
+export poset_from_l_algebra
 export <=
 export <
 export >=

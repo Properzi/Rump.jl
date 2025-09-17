@@ -321,7 +321,34 @@ mutable struct l_algebra_morphism
         new(domain, codomain, map)
     end
 end
- 
+
+"""
+    poset_from_l_algebra(a::l_algebra)
+
+Returns the poset associated with the L-algebra a
+
+# Examples
+```jldoctest
+julia> a = l_algebra([2 2; 1 2]);
+julia> poset_from_l_algebra(a)
+Partially ordered set of rank 1 on 2 elements
+```
+"""
+function poset_from_l_algebra(a::l_algebra)#uses Oscar
+    x=normal_form(a)
+    m=x.matrix
+    #s=size(a)
+    n=logical_unit(x).value
+    adj=zeros(Int64, n,n)
+    for i in 1:n
+        for j in i+1:n
+            if m[i,j]==n
+                adj[i,j]=1
+            end
+        end
+    end
+    return partially_ordered_set(adj)
+end
 
 """
     <=(x::l_algebra_element, y::l_algebra_element)
