@@ -1,5 +1,5 @@
 
-function number_of_LAlgebras(n)
+function number_of_l_algebras(n)
     if n == 1 || n == 2
         return 1
     end
@@ -21,7 +21,7 @@ end
 
 
 
-function small_LAlgebra(n,k)
+function small_l_algebras(n,k)
     if n == 1
         if k != 1
             error("there is only 1 L-algebra of size 1")

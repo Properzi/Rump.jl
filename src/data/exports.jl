@@ -1,2 +1,2 @@
-export number_of_LAlgebras
+export number_of_l_algebras
 export small_LAlgebra

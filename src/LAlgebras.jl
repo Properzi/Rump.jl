@@ -1,18 +1,18 @@
 """
-    check_LAlgebra(M::Matrix)
+    check_l_algebra(M::Matrix)
 
 Check if the matrix M is a multiplication table of an L-algebra.
 
 # Examples
 ```jldoctest
-julia> check_LAlgebra([2 2; 1 2])
+julia> check_l_algebra([2 2; 1 2])
 true
 
-julia> check_LAlgebra([1 2; 1 2])
+julia> check_l_algebra([1 2; 1 2])
 false
 ```
 """
-function check_LAlgebra(M::Matrix) 
+function check_l_algebra(M::Matrix) 
     if !isa(M, Matrix{Int})
         return false
     end
@@ -51,63 +51,63 @@ end
 
 
 """
-    LAlgebra(M::Matrix)
-    LAlgebra(M::Matrix ; check::Bool = false)
+    l_algebra(M::Matrix)
+    l_algebra(M::Matrix ; check::Bool = false)
 
 The L-algebra with elements {1,…,n} and multiplication table
 given by M, i.e. i*j = M[i,j].
 
 Check has a default value of false. 
-Set `check = true` to [`check_LAlgebra(M)`](@ref)
+Set `check = true` to [`check_l_algebra(M)`](@ref)
 before constructing the L-algebra.
 
-See also [`check_LAlgebra`](@ref), [`LAlgebraElem`](@ref).
+See also [`check_l_algebra`](@ref), [`l_algebra_element`](@ref).
 
 # Examples
 ```jldoctest
-julia> LAlgebra([2 2; 1 2])
-LAlgebra([2 2; 1 2])
+julia> l_algebra([2 2; 1 2])
+l_algebra([2 2; 1 2])
 
-julia> LAlgebra([2 2; 1 2], check=true)
-LAlgebra([2 2; 1 2])
+julia> l_algebra([2 2; 1 2], check=true)
+l_algebra([2 2; 1 2])
 
-julia> LAlgebra([1 1; 1 2], check=true)
+julia> l_algebra([1 1; 1 2], check=true)
 ERROR: [1 1; 1 2] does not define an L-algebra
 [...]
 ```
 """
-mutable struct LAlgebra 
+mutable struct l_algebra 
     matrix::Matrix
-    LAlgebra(matrix::Matrix ; check::Bool = false) = check ? 
-        ( check_LAlgebra(matrix) ? 
+    l_algebra(matrix::Matrix ; check::Bool = false) = check ? 
+        ( check_l_algebra(matrix) ? 
             new(matrix) : error("$matrix does not define an L-algebra") ) : new(matrix)
-end # LAlgebra(matrix, check = true) if you want to check the matrix
+end # l_algebra(matrix, check = true) if you want to check the matrix
 
-function ==(a::LAlgebra, b::LAlgebra) # when?
+function ==(a::l_algebra, b::l_algebra) # when?
      return (a.matrix == b.matrix )
 end
 
 """
-    LAlgebraElem(M::Matrix, value::Int)
-    LAlgebra(M::Matrix ; check::Bool = false)
+    l_algebra_element(M::Matrix, value::Int)
+    l_algebra(M::Matrix ; check::Bool = false)
 
 The element number `value` in the L-algebra defined by the matrix `M`.
-See also [`LAlgebra`](@ref).
+See also [`l_algebra`](@ref).
 
 # Examples
 ```jldoctest
-julia> a = LAlgebra([2 2; 1 2]);
-julia> LAlgebraElem(A, 2)
-LAlgebraElem(LAlgebra([2 2; 1 2]), 2)
+julia> a = l_algebra([2 2; 1 2]);
+julia> l_algebra_element(A, 2)
+l_algebra_element(l_algebra([2 2; 1 2]), 2)
 ```
 """
-mutable struct LAlgebraElem
-    algebra::LAlgebra
+mutable struct l_algebra_element
+    algebra::l_algebra
     value::Int
 end
  
 
-function Base.hash(x::LAlgebraElem, h::UInt)
+function Base.hash(x::l_algebra_element, h::UInt)
     b = 0xa4e1b6fd78a06458%UInt 
     # choosen using https://www.random.org/cgi-bin/randbyte?nbytes=8&format=h
     return xor(b, xor(hash(x.value, h), h))
@@ -115,19 +115,19 @@ end
 
 
 """
-    print(x::LAlgebraElem)
+    print(x::l_algebra_element)
 
 When applied to L-algebra elements,
  prints (using println) the  value of x.
 """
-function print(x::LAlgebraElem)
+function print(x::l_algebra_element)
     println(x.value)
 end
 
 
 
 
-function ==(x::LAlgebraElem, y::LAlgebraElem)
+function ==(x::l_algebra_element, y::l_algebra_element)
     if !( x.algebra == y.algebra )
         # return false
         return error("elements not in the same L-algebra")
@@ -136,131 +136,131 @@ function ==(x::LAlgebraElem, y::LAlgebraElem)
 end
 
 """
-    *(x::LAlgebraElem, y::LAlgebraElem)
+    *(x::l_algebra_element, y::l_algebra_element)
 
 When applied to L-algebra elements of the same L-algebra,
 multiplies them in the L-algebra.
 # Examples
 ```jldoctest
-julia> a = LAlgebra([2 2; 1 2]);
-julia> b = LAlgebra([3 1 3; 3 3 3; 1 2 3]);
+julia> a = l_algebra([2 2; 1 2]);
+julia> b = l_algebra([3 1 3; 3 3 3; 1 2 3]);
 
-julia> LAlgebraElem(a,2)*LAlgebraElem(b,2);
-ERROR: elements not in the same LAlgebra
+julia> l_algebra_element(a,2)*l_algebra_element(b,2);
+ERROR: elements not in the same l_algebra
 
-julia> LAlgebraElem(a,2)*LAlgebraElem(a,1)
-LAlgebraElem(LAlgebra([2 2; 1 2]), 1)
+julia> l_algebra_element(a,2)*l_algebra_element(a,1)
+l_algebra_element(l_algebra([2 2; 1 2]), 1)
 
-julia> LAlgebraElem(a,1)*LAlgebraElem(a,1)*LAlgebraElem(a,1)
-LAlgebraElem(LAlgebra([2 2; 1 2]), 1)
+julia> l_algebra_element(a,1)*l_algebra_element(a,1)*l_algebra_element(a,1)
+l_algebra_element(l_algebra([2 2; 1 2]), 1)
 
-julia> LAlgebraElem(a,1)*(LAlgebraElem(a,1)*LAlgebraElem(a,1))
-LAlgebraElem(LAlgebra([2 2; 1 2]), 2)
+julia> l_algebra_element(a,1)*(l_algebra_element(a,1)*l_algebra_element(a,1))
+l_algebra_element(l_algebra([2 2; 1 2]), 2)
 ```
 """
-function *(x::LAlgebraElem, y::LAlgebraElem)
+function *(x::l_algebra_element, y::l_algebra_element)
     if !(x.algebra == y.algebra) 
         return error("elements not in the same L-algebra")
     end
     res = x.algebra.matrix[x.value, y.value]
-    return LAlgebraElem(x.algebra, res)
+    return l_algebra_element(x.algebra, res)
 end
 
 
-Base.iterate(L::LAlgebra, state=1) = state > size(L) ?
-     nothing : (LAlgebraElem(L,state), state+1)
+Base.iterate(L::l_algebra, state=1) = state > size(L) ?
+     nothing : (l_algebra_element(L,state), state+1)
 
 """
-    in(x::LAlgebraElem, a::LAlgebra)
+    in(x::l_algebra_element, a::l_algebra)
 
 Determine whether `x` is an element of `a`
 in the sense that `x.algebra==a`
 ```jldoctest
-julia> A = LAlgebra([2 2; 1 2]);
-julia> B = LAlgebra([3 1 3; 1 3 3; 1 2 3]);
-julia> LAlgebraElem(A,2) in A
+julia> A = l_algebra([2 2; 1 2]);
+julia> B = l_algebra([3 1 3; 1 3 3; 1 2 3]);
+julia> l_algebra_element(A,2) in A
 true
 
-julia> LAlgebraElem(B,2) in A
+julia> l_algebra_element(B,2) in A
 false
 ```
 """
-function in(x::LAlgebraElem, a::LAlgebra)
+function in(x::l_algebra_element, a::l_algebra)
     return (x.algebra == a)
 end
 
 """
-    size(a::LAlgebra)
+    size(a::l_algebra)
 
 When applied to an L-algebra returns its cardinality.
 
 # Examples
 ```jldoctest
-julia> A = LAlgebra([2 2; 1 2]);
+julia> A = l_algebra([2 2; 1 2]);
 julia> size(A)
 2
 ```
 """
-function size(a::LAlgebra)
+function size(a::l_algebra)
     return size(a.matrix, 2)
 end
 
 
 """
-    length(a::LAlgebra)
+    length(a::l_algebra)
  
  When applied to an L-algebra returns its cardinality.
  
  # Examples
 ```jldoctest
- julia> A = LAlgebra([2 2; 1 2]);
+ julia> A = l_algebra([2 2; 1 2]);
  julia> length(A)
  2
 ```
  """ 
-Base.length(L::LAlgebra) = size(L)
+Base.length(L::l_algebra) = size(L)
 
 """
-    logical_unit(a::LAlgebra))
+    logical_unit(a::l_algebra))
 
 Return the logical unit of the L-algebra a, i.e.
 the element u in a such that x*x=x*u=u and u*x=x for all x in a.
 """
-function logical_unit(a::LAlgebra)
-    return LAlgebraElem(a, a.matrix[1,1])
+function logical_unit(a::l_algebra)
+    return l_algebra_element(a, a.matrix[1,1])
 end
 
 
 
-function !=(x::LAlgebraElem, y::LAlgebraElem)
+function !=(x::l_algebra_element, y::l_algebra_element)
     if !( x.algebra == y.algebra )
-        return error("elements not in the same LAlgebra")
+        return error("elements not in the same l_algebra")
     end
     return ( x.value != y.value)
 end 
 
 """
-    is_LAlgebraMor(domain::LAlgebra, codomain::LAlgebra, map::Vector{LAlgebraElem}) -> Bool
+    is_l_algebra_morphism(domain::l_algebra, codomain::l_algebra, map::Vector{l_algebra_element}) -> Bool
 
 Check whether the given map defines a morphism of L-algebras from `domain` to `codomain`.
 
 # Arguments
-- `domain::LAlgebra`: The domain L-algebra.
-- `codomain::LAlgebra`: The codomain L-algebra.
-- `map::Vector{LAlgebraElem}`: A vector representing the map from `domain` to `codomain`.
+- `domain::l_algebra`: The domain L-algebra.
+- `codomain::l_algebra`: The codomain L-algebra.
+- `map::Vector{l_algebra_element}`: A vector representing the map from `domain` to `codomain`.
 
 # Returns
 - `Bool`: `true` if `map` defines an L-algebra morphism, `false` otherwise.
 
 # Examples
 ```jldoctest
-julia> A = LAlgebra([2 2; 1 2]);
-julia> B = LAlgebra([2 2; 1 2]);
-julia> m = [LAlgebraElem(B,1), LAlgebraElem(B,2)];
-julia> is_LAlgebraMor(A, B, m)
+julia> A = l_algebra([2 2; 1 2]);
+julia> B = l_algebra([2 2; 1 2]);
+julia> m = [l_algebra_element(B,1), l_algebra_element(B,2)];
+julia> is_l_algebra_morphism(A, B, m)
 true
 """
-function is_LAlgebraMor(domain::LAlgebra, codomain::LAlgebra, map::Vector{LAlgebraElem}) 
+function is_l_algebra_morphism(domain::l_algebra, codomain::l_algebra, map::Vector{l_algebra_element}) 
     m = size(domain)
     n = size(codomain)
     if length(map) != m
@@ -274,8 +274,8 @@ function is_LAlgebraMor(domain::LAlgebra, codomain::LAlgebra, map::Vector{LAlgeb
     end
 
     for i in 1:m, j in 1:m
-        x = LAlgebraElem(domain, i )
-        y = LAlgebraElem(domain, j)
+        x = l_algebra_element(domain, i )
+        y = l_algebra_element(domain, j)
         if map[(x*y).value] != map[i] * map[j] 
             return false
         end
@@ -285,37 +285,37 @@ end
 
 
 """
-    LAlgebraMor(domain::LAlgebra, codomain::LAlgebra, map::Vector{LAlgebraElem}; check=true)
+    l_algebra_morphism(domain::l_algebra, codomain::l_algebra, map::Vector{l_algebra_element}; check=true)
 
 Construct an L-algebra morphism from `domain` to `codomain` given by `map`.
 
 # Arguments
-- `domain::LAlgebra`: The domain L-algebra.
-- `codomain::LAlgebra`: The codomain L-algebra.
-- `map::Vector{LAlgebraElem}`: A vector of elements in `codomain` representing the images of elements in `domain`.
+- `domain::l_algebra`: The domain L-algebra.
+- `codomain::l_algebra`: The codomain L-algebra.
+- `map::Vector{l_algebra_element}`: A vector of elements in `codomain` representing the images of elements in `domain`.
 - `check::Bool`: If `true` (default), verify that `map` defines a valid morphism.
 
 # Returns
-- `LAlgebraMor`: The L-algebra morphism object.
+- `l_algebra_morphism`: The L-algebra morphism object.
 
 # Examples
 ```jldoctest
-julia> A = LAlgebra([2 2; 1 2]);
-julia> B = LAlgebra([2 2; 1 2]);
-julia> m = [LAlgebraElem(B,1), LAlgebraElem(B,2)];
-julia> LAlgebraMor(A, B, m)
-LAlgebraMor(LAlgebra([2 2; 1 2]), LAlgebra([2 2; 1 2]), LAlgebraElem[LAlgebraElem(LAlgebra([2 2; 1 2]), 1), LAlgebraElem(LAlgebra([2 2; 1 2]), 2)])
+julia> A = l_algebra([2 2; 1 2]);
+julia> B = l_algebra([2 2; 1 2]);
+julia> m = [l_algebra_element(B,1), l_algebra_element(B,2)];
+julia> l_algebra_morphism(A, B, m)
+l_algebra_morphism(l_algebra([2 2; 1 2]), l_algebra([2 2; 1 2]), l_algebra_element[l_algebra_element(l_algebra([2 2; 1 2]), 1), l_algebra_element(l_algebra([2 2; 1 2]), 2)])
 
-julia> invalid = [LAlgebraElem(B,2), LAlgebraElem(B,1)];
-julia> LAlgebraMor(A, B, invalid)
-ERROR:  LAlgebraElem[LAlgebraElem(LAlgebra([2 2; 1 2]), 2), LAlgebraElem(LAlgebra([2 2; 1 2]), 1)] is not a valid L-algebra morphism from LAlgebra([2 2; 1 2]) to LAlgebra([2 2; 1 2])"""
-mutable struct LAlgebraMor
-    domain::LAlgebra
-    codomain::LAlgebra
-    map::Vector{LAlgebraElem}
-    function LAlgebraMor(domain::LAlgebra, codomain::LAlgebra, map::Vector{LAlgebraElem}; check::Bool=true)
+julia> invalid = [l_algebra_element(B,2), l_algebra_element(B,1)];
+julia> l_algebra_morphism(A, B, invalid)
+ERROR:  l_algebra_element[l_algebra_element(l_algebra([2 2; 1 2]), 2), l_algebra_element(l_algebra([2 2; 1 2]), 1)] is not a valid L-algebra morphism from l_algebra([2 2; 1 2]) to l_algebra([2 2; 1 2])"""
+mutable struct l_algebra_morphism
+    domain::l_algebra
+    codomain::l_algebra
+    map::Vector{l_algebra_element}
+    function l_algebra_morphism(domain::l_algebra, codomain::l_algebra, map::Vector{l_algebra_element}; check::Bool=true)
         if check
-            is_LAlgebraMor(domain, codomain, map) || 
+            is_l_algebra_morphism(domain, codomain, map) || 
                 error("$map is not a valid L-algebra morphism from $domain to $codomain")
         end
         new(domain, codomain, map)
@@ -324,13 +324,13 @@ end
  
 
 """
-    <=(x::LAlgebraElem, y::LAlgebraElem)
+    <=(x::l_algebra_element, y::l_algebra_element)
 
 Check if x≤y.
 """
-function <=(x::LAlgebraElem, y::LAlgebraElem)
+function <=(x::l_algebra_element, y::l_algebra_element)
     if !( x.algebra == y.algebra )
-        return error("elements not in the same LAlgebra")
+        return error("elements not in the same l_algebra")
     end
     a = x.algebra
     lu = logical_unit(a)
@@ -338,22 +338,22 @@ function <=(x::LAlgebraElem, y::LAlgebraElem)
 end
 
 """
-    <(x::LAlgebraElem, y::LAlgebraElem)
+    <(x::l_algebra_element, y::l_algebra_element)
 
 Check if x<y.
 """
-function <(x::LAlgebraElem, y::LAlgebraElem)
+function <(x::l_algebra_element, y::l_algebra_element)
     return (x <= y && x != y)
 end 
 
 """
-    >=(x::LAlgebraElem, y::LAlgebraElem)
+    >=(x::l_algebra_element, y::l_algebra_element)
 
 Check if x≥y.
 """
-function >=(x::LAlgebraElem, y::LAlgebraElem)
+function >=(x::l_algebra_element, y::l_algebra_element)
     if !( x.algebra == y.algebra )
-        return error("elements not in the same LAlgebra")
+        return error("elements not in the same l_algebra")
     end
     a = x.algebra
     lu = logical_unit(a)
@@ -361,21 +361,21 @@ function >=(x::LAlgebraElem, y::LAlgebraElem)
 end
 
 """
-    >(x::LAlgebraElem, y::LAlgebraElem)
+    >(x::l_algebra_element, y::l_algebra_element)
 
 Check if x>y.
 """
-function >(x::LAlgebraElem, y::LAlgebraElem)
+function >(x::l_algebra_element, y::l_algebra_element)
     return (x >= y) && (x != y)
 end
 
 """
-    *(S::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}},x::LAlgebraElem)
+    *(S::Union{Set{l_algebra_element}, Vector{l_algebra_element}},x::l_algebra_element)
 
 Return the set of products {s*t:s∈S,t∈T}.
 """
-function *(S::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}}, T::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}})
-    res = Set{LAlgebraElem}()  
+function *(S::Union{Set{l_algebra_element}, Vector{l_algebra_element}}, T::Union{Set{l_algebra_element}, Vector{l_algebra_element}})
+    res = Set{l_algebra_element}()  
     for s in S, t in T
         push!(res,s*t)
     end
@@ -383,99 +383,99 @@ function *(S::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}}, T::Union{Set{LAlge
 end
 
 """
-    *(S::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}},x::LAlgebraElem)
+    *(S::Union{Set{l_algebra_element}, Vector{l_algebra_element}},x::l_algebra_element)
 
 Return the set of products {s*x∣s∈S}.
 """
-function *(S::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}},x::LAlgebraElem)
+function *(S::Union{Set{l_algebra_element}, Vector{l_algebra_element}},x::l_algebra_element)
     return S * [x]
 end
 
 """
-    *(x::LAlgebraElem,S::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}})
+    *(x::l_algebra_element,S::Union{Set{l_algebra_element}, Vector{l_algebra_element}})
 
 Return the set of products {x*s∣s∈S}.
 """
-function *(x::LAlgebraElem,S::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}})
+function *(x::l_algebra_element,S::Union{Set{l_algebra_element}, Vector{l_algebra_element}})
     return [x] * S
 end
 
 """
-    rand_elem(a::LAlgebra)
+    rand_elem(a::l_algebra)
 
 Return a random element of a.
 """
-function rand_elem(a::LAlgebra)
-    return LAlgebraElem(a,rand(1:size(a)))    
+function rand_elem(a::l_algebra)
+    return l_algebra_element(a,rand(1:size(a)))    
 end
 
 """
-    elements(a::LAlgebra)
+    elements(a::l_algebra)
 
 Return a vector of all the elements of a.
 # Examples
 ```jldoctest
-julia> a = LAlgebra([2 2; 1 2]);
+julia> a = l_algebra([2 2; 1 2]);
 julia> elements(a)
-2-element Vector{LAlgebraElem}:
- LAlgebraElem(LAlgebra([2 2; 1 2]), 1)
- LAlgebraElem(LAlgebra([2 2; 1 2]), 2)
+2-element Vector{l_algebra_element}:
+ l_algebra_element(l_algebra([2 2; 1 2]), 1)
+ l_algebra_element(l_algebra([2 2; 1 2]), 2)
 ```
 """
-function elements(a::LAlgebra)
+function elements(a::l_algebra)
     n = size(a)
-    return [LAlgebraElem(a,y) for y in 1:n]
+    return [l_algebra_element(a,y) for y in 1:n]
 end
 
 """
-    upset(x::LAlgebraElem)
+    upset(x::l_algebra_element)
 
 Given an element x of an L-algebra A,
 return a vector of all the elements in A that are bigger than or equal to x.
 # Examples
 ```jldoctest
-julia> a = LAlgebra([2 2; 1 2]);
+julia> a = l_algebra([2 2; 1 2]);
 julia> upset(a)
-1-element Vector{LAlgebraElem}:
- LAlgebraElem(LAlgebra([2 2; 1 2]), 2)
+1-element Vector{l_algebra_element}:
+ l_algebra_element(l_algebra([2 2; 1 2]), 2)
 ```
 """
-function upset(x::LAlgebraElem)
+function upset(x::l_algebra_element)
     a = x.algebra
     return [y for y in a if y >= x]
 end
 
 """
-    downset(x::LAlgebraElem)
+    downset(x::l_algebra_element)
 
 Given an element x of an L-algebra A,
 return a vector of all the elements in A that are smaller than or equal to x.
 # Examples
 ```jldoctest
-julia> a = LAlgebra([2 2; 1 2]);
+julia> a = l_algebra([2 2; 1 2]);
 julia> downset(x)
-2-element Vector{LAlgebraElem}:
- LAlgebraElem(LAlgebra([2 2; 1 2]), 1)
- LAlgebraElem(LAlgebra([2 2; 1 2]), 2)
+2-element Vector{l_algebra_element}:
+ l_algebra_element(l_algebra([2 2; 1 2]), 1)
+ l_algebra_element(l_algebra([2 2; 1 2]), 2)
 ```
 """
-function downset(x::LAlgebraElem)
+function downset(x::l_algebra_element)
     a = x.algebra
     return [y for y in a if y <= x]
 end
 
 """
-    is_sharp(a::LAlgebra)
+    is_sharp(a::l_algebra)
 
 Check if A is a sharp L-algebra
 # Examples
 ```jldoctest
-julia> A = LAlgebra([2 2; 1 2]);
+julia> A = l_algebra([2 2; 1 2]);
 julia> is_sharp(A)
 true
 ```
 """
-function is_sharp(a::LAlgebra)
+function is_sharp(a::l_algebra)
     for x in a, y in a 
         if x * y != x* (x * y)
             return false
@@ -485,17 +485,17 @@ function is_sharp(a::LAlgebra)
 end
 
 """
-    is_symmetric(a::LAlgebra)
+    is_symmetric(a::l_algebra)
 
 Check if A is a symmetric L-algebra
 # Examples
 ```jldoctest
-julia> A = LAlgebra([2 2; 1 2]);
+julia> A = l_algebra([2 2; 1 2]);
 julia> is_symmetric(A)
 true
 ```
 """
-function is_symmetric(a::LAlgebra)
+function is_symmetric(a::l_algebra)
     for x in a, y in a  
         if x * y == y && y * x != x
             return false
@@ -506,17 +506,17 @@ end
 
 
 """
-    is_abelian(a::LAlgebra)
+    is_abelian(a::l_algebra)
 
 Check if A is an abelian L-algebra
 # Examples
 ```jldoctest
-julia> A = LAlgebra([2 2; 1 2]);
+julia> A = l_algebra([2 2; 1 2]);
 julia> is_abelian(A)
 false
 ```
 """
-function is_abelian(a::LAlgebra)
+function is_abelian(a::l_algebra)
     for x in a, y in a, z in a, t in a
         if (x * y) * ( z * t ) != ( x * z ) * ( y * t )
             return false
@@ -526,17 +526,17 @@ function is_abelian(a::LAlgebra)
 end
 
 """
-    is_linear(a::LAlgebra)
+    is_linear(a::l_algebra)
 
 Check if A is a linear L-algebra
 # Examples
 ```jldoctest
-julia> A = LAlgebra([2 2; 1 2]);
+julia> A = l_algebra([2 2; 1 2]);
 julia> is_linear(A)
 false
 ```
 """
-function is_linear(a::LAlgebra)
+function is_linear(a::l_algebra)
     for x in a, y in a
         if !(x <= y) && !( x >= y )
             return false
@@ -546,17 +546,17 @@ function is_linear(a::LAlgebra)
 end
 
 """
-    is_discrete(a::LAlgebra)
+    is_discrete(a::l_algebra)
 
 Check if A is a discrete L-algebra
 # Examples
 ```jldoctest
-julia> A = LAlgebra([2 2; 1 2]);
+julia> A = l_algebra([2 2; 1 2]);
 julia> is_discrete(A)
 false
 ```
 """
-function is_discrete(a::LAlgebra)
+function is_discrete(a::l_algebra)
     lu = logical_unit(a)
     for x in a, y in a
         if (x <= y) && ( x != y ) && (y != lu)
@@ -568,17 +568,17 @@ end
 
 
 """
-    is_semiregular(a::LAlgebra)
+    is_semiregular(a::l_algebra)
 
 Check if A is a semiregular L-algebra
 # Examples
 ```jldoctest
-julia> A = LAlgebra([2 2; 1 2]);
+julia> A = l_algebra([2 2; 1 2]);
 julia> is_semiregular(A)
 true
 ```
 """
-function is_semiregular(a::LAlgebra)
+function is_semiregular(a::l_algebra)
     for x in a, y in a, z in a
         if ((x * y) * z) * ((y * x) * z) != ((x * y) * z) * z
             return false
@@ -589,17 +589,17 @@ end
 
 
 """
-    is_regular(a::LAlgebra)
+    is_regular(a::l_algebra)
 
 Check if A is a regular L-algebra
 # Examples
 ```jldoctest
-julia> A = LAlgebra([2 2; 1 2]);
+julia> A = l_algebra([2 2; 1 2]);
 julia> is_regular(A)
 true
 ```
 """
-function is_regular(a::LAlgebra)
+function is_regular(a::l_algebra)
     if !(is_semiregular(a))
         return false
     end
@@ -613,17 +613,17 @@ end
 
 
 """
-    is_hilbert(a::LAlgebra)
+    is_hilbert(a::l_algebra)
 
 Check if A is a hilbert L-algebra
 # Examples
 ```jldoctest
-julia> A = LAlgebra([2 2; 1 2]);
+julia> A = l_algebra([2 2; 1 2]);
 julia> is_hilbert(A)
 true
 ```
 """
-function is_hilbert(a::LAlgebra)
+function is_hilbert(a::l_algebra)
     for x in a, y in a, z in a
         if (x * (y * z)) != (x * y) * (x * z)
             return false
@@ -633,17 +633,17 @@ function is_hilbert(a::LAlgebra)
 end
 
 """
-    is_dualBCK(a::LAlgebra)
+    is_dualBCK(a::l_algebra)
 
 Check if A is a dualBCK-algebra
 # Examples
 ```jldoctest
-julia> A = Lalgebra([2 2; 1 2]);
+julia> A = l_algebra([2 2; 1 2]);
 julia> is_dualBCK(A)
 false
 ```
 """
-function is_dualBCK(a::LAlgebra)
+function is_dualBCK(a::l_algebra)
     for x in a, y in a, z in a
         if (x * (y * z)) != (y * x) * z
             return false
@@ -653,17 +653,17 @@ function is_dualBCK(a::LAlgebra)
 end
 
 """
-    is_KL(a::LAlgebra)
+    is_KL(a::l_algebra)
 
 Check if a is a KL-algebra
 # Examples
 ```jldoctest
-julia> a = LAlgebra([2 2; 1 2]);
+julia> a = l_algebra([2 2; 1 2]);
 julia> is_KL(a)
 true
 ```
 """
-function is_KL(a::LAlgebra)
+function is_KL(a::l_algebra)
     for x in a, y in a
         if !(x <= (y * x))
             return false
@@ -673,17 +673,17 @@ function is_KL(a::LAlgebra)
 end
 
 """
-    is_CL(a::LAlgebra)
+    is_CL(a::l_algebra)
 
 Check if a is a CL-algebra
 # Examples
 ```jldoctest
-julia> a = LAlgebra([2 2; 1 2]);
+julia> a = l_algebra([2 2; 1 2]);
 julia> is_CL(a)
 true
 ```
 """
-function is_CL(a::LAlgebra)
+function is_CL(a::l_algebra)
     lu = logical_unit(a)
     for x in a, y in a, z in a
         if (x * (y * z)) * (y * (x * z)) != lu
@@ -694,19 +694,19 @@ function is_CL(a::LAlgebra)
 end
 
 """
-    is_prime_element(p::LAlgebraElem) 
+    is_prime_element(p::l_algebra_element) 
 
 Check if p is a prime element of the L-algebra.
 # Examples
 ```jldoctest
-julia> a = LAlgebra([2 2; 1 2]);
-julia> p = LAlgebraElem(A,1)
+julia> a = l_algebra([2 2; 1 2]);
+julia> p = l_algebra_element(A,1)
 true
-julia> n = LAlgebraElem(A,2)
+julia> n = l_algebra_element(A,2)
 false
 ```
 """
-function is_prime_element(p::LAlgebraElem) #logical unit is not prime
+function is_prime_element(p::l_algebra_element) #logical unit is not prime
     a = p.algebra
     lu = logical_unit(a)
     if p == lu
@@ -721,43 +721,43 @@ function is_prime_element(p::LAlgebraElem) #logical unit is not prime
 end
 
 """
-    prime_elements(a::LAlgebra) 
+    prime_elements(a::l_algebra) 
 
 Return a vector with all the prime elements of a 
 # Examples
 ```jldoctest
-julia> a = LAlgebra([2 2; 1 2]);
+julia> a = l_algebra([2 2; 1 2]);
 julia> prime_elements(a)
-1-element Vector{LAlgebraElem}:
- LAlgebraElem(LAlgebra([2 2; 1 2]), 1)
+1-element Vector{l_algebra_element}:
+ l_algebra_element(l_algebra([2 2; 1 2]), 1)
 
-julia> b = LAlgebra([3 1 3; 3 3 3; 1 2 3]);
+julia> b = l_algebra([3 1 3; 3 3 3; 1 2 3]);
 julia> prime_elements(b)
-1-element Vector{LAlgebraElem}:
- LAlgebraElem(LAlgebra([3 1 3; 3 3 3; 1 2 3]), 1)
+1-element Vector{l_algebra_element}:
+ l_algebra_element(l_algebra([3 1 3; 3 3 3; 1 2 3]), 1)
 ```
 """
-function prime_elements(a::LAlgebra)
+function prime_elements(a::l_algebra)
     E = elements(a)
     return filter(x -> is_prime_element(x), E)
 end
 
 """
-    is_prime(a::LAlgebra)
+    is_prime(a::l_algebra)
 
 Check if a is a prime L-algebra
 # Examples
 ```jldoctest
-julia> a = LAlgebra([2 2; 1 2]);
+julia> a = l_algebra([2 2; 1 2]);
 julia> is_prime(a)
 true
 
-julia> b = LAlgebra([3 1 3; 3 3 3; 1 2 3]);
+julia> b = l_algebra([3 1 3; 3 3 3; 1 2 3]);
 julia> is_prime(b)
 false
 ```
 """
-function is_prime(a::LAlgebra)
+function is_prime(a::l_algebra)
     lu = logical_unit(a)
     for x in a
         if x!=lu && !is_prime_element(x)
@@ -768,20 +768,20 @@ function is_prime(a::LAlgebra)
 end
 
 """
-    is_subLalgebra(s::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}}, a::LAlgebra)
+    is_subl_algebra(s::Union{Set{l_algebra_element}, Vector{l_algebra_element}}, a::l_algebra)
  
 Check if s (either a subset or a vector of elements of a),
      is a L-subalgebra of a.
 # Examples
 ```jldoctest
-julia> a = LAlgebra([2 2; 1 2]);
-julia> is_subLalgebra([LAlgebraElem(a,1)],a)
+julia> a = l_algebra([2 2; 1 2]);
+julia> is_subl_algebra([l_algebra_element(a,1)],a)
 false
-julia> is_subLalgebra([LAlgebraElem(a,2)],a)
+julia> is_subl_algebra([l_algebra_element(a,2)],a)
 true
 ```
 """
-function is_subLalgebra(s::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}}, a::LAlgebra)
+function is_subl_algebra(s::Union{Set{l_algebra_element}, Vector{l_algebra_element}}, a::l_algebra)
     if !(issubset(s,a))
         return error("not a subset")
     end
@@ -798,20 +798,20 @@ function is_subLalgebra(s::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}}, a::LA
 end
 
 """
-    is_invariant(s::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}}, a::LAlgebra)
+    is_invariant(s::Union{Set{l_algebra_element}, Vector{l_algebra_element}}, a::l_algebra)
  
 Check if s (either a subset or a vector of elements of a),
      is closed under the operation of a.
 # Examples
 ```jldoctest
-julia> a = LAlgebra([2 2; 1 2]);
-julia> is_invariant([LAlgebraElem(a,1)],a)
+julia> a = l_algebra([2 2; 1 2]);
+julia> is_invariant([l_algebra_element(a,1)],a)
 false
-julia> is_invariant([LAlgebraElem(a,2)],a)
+julia> is_invariant([l_algebra_element(a,2)],a)
 true
 ```
 """
-function is_invariant(s::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}}, a::LAlgebra)
+function is_invariant(s::Union{Set{l_algebra_element}, Vector{l_algebra_element}}, a::l_algebra)
     if !(issubset(s,a))
         return error("not a subset")
     end
@@ -824,20 +824,20 @@ function is_invariant(s::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}}, a::LAlg
 end
 
 """
-    is_ideal(s::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}}, a::LAlgebra)
+    is_ideal(s::Union{Set{l_algebra_element}, Vector{l_algebra_element}}, a::l_algebra)
  
 Check if s (either a subset or a vector of eleemtns of a),
      is an ideal of a.
 # Examples
 ```jldoctest
-julia> a = LAlgebra([2 2; 1 2]);
-julia> is_ideal([LAlgebraElem(a,1)],a)
+julia> a = l_algebra([2 2; 1 2]);
+julia> is_ideal([l_algebra_element(a,1)],a)
 false
-julia> is_ideal([LAlgebraElem(a,2)],a)
+julia> is_ideal([l_algebra_element(a,2)],a)
 true
 ```
 """
-function is_ideal(s::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}}, a::LAlgebra)
+function is_ideal(s::Union{Set{l_algebra_element}, Vector{l_algebra_element}}, a::l_algebra)
     if !(issubset(s,a))
         return error("not a subset")
     end
@@ -860,22 +860,22 @@ function is_ideal(s::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}}, a::LAlgebra
 end
 
 """
-    subLalgebra_generated_by(s::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}}, a::LAlgebra)
+    subl_algebra_generated_by(s::Union{Set{l_algebra_element}, Vector{l_algebra_element}}, a::l_algebra)
  
 Return the L-subalgebra of a generated by the subset (or the elements in the vector) s.
 # Examples
 ```jldoctest
-julia> a = LAlgebra([2 2; 1 2]);
-julia> subLalgebra_generated_by([LAlgebraElem(a,1)],a)
-Set{LAlgebraElem} with 2 elements:
-  LAlgebraElem(LAlgebra([2 2; 1 2]), 1)
-  LAlgebraElem(LAlgebra([2 2; 1 2]), 2)
-julia> subLalgebra_generated_by([LAlgebraElem(a,2)],a)
-Set{LAlgebraElem} with 1 element:
-  LAlgebraElem(LAlgebra([2 2; 1 2]), 2)
+julia> a = l_algebra([2 2; 1 2]);
+julia> subl_algebra_generated_by([l_algebra_element(a,1)],a)
+Set{l_algebra_element} with 2 elements:
+  l_algebra_element(l_algebra([2 2; 1 2]), 1)
+  l_algebra_element(l_algebra([2 2; 1 2]), 2)
+julia> subl_algebra_generated_by([l_algebra_element(a,2)],a)
+Set{l_algebra_element} with 1 element:
+  l_algebra_element(l_algebra([2 2; 1 2]), 2)
 ```
 """
-function subLalgebra_generated_by(S::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}}, a::LAlgebra)
+function subl_algebra_generated_by(S::Union{Set{l_algebra_element}, Vector{l_algebra_element}}, a::l_algebra)
     T = Set([logical_unit(a)])
     S = Set(S)
     if length(S) == 0
@@ -889,22 +889,22 @@ function subLalgebra_generated_by(S::Union{Set{LAlgebraElem}, Vector{LAlgebraEle
 end
 
 """
-    ideal_generated_by(s::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}}, a::LAlgebra)
+    ideal_generated_by(s::Union{Set{l_algebra_element}, Vector{l_algebra_element}}, a::l_algebra)
  
 Return the ideal of a generated by the subset (or the elements in the vector) s.
 # Examples
 ```jldoctest
-julia> a = LAlgebra([2 2; 1 2]);
-julia> ideal_generated_by([LAlgebraElem(a,1)],a)
-Set{LAlgebraElem} with 2 elements:
-  LAlgebraElem(LAlgebra([2 2; 1 2]), 1)
-  LAlgebraElem(LAlgebra([2 2; 1 2]), 2)
-julia> ideal_generated_by([LAlgebraElem(a,2)],a)
-Set{LAlgebraElem} with 1 element:
-  LAlgebraElem(LAlgebra([2 2; 1 2]), 2)
+julia> a = l_algebra([2 2; 1 2]);
+julia> ideal_generated_by([l_algebra_element(a,1)],a)
+Set{l_algebra_element} with 2 elements:
+  l_algebra_element(l_algebra([2 2; 1 2]), 1)
+  l_algebra_element(l_algebra([2 2; 1 2]), 2)
+julia> ideal_generated_by([l_algebra_element(a,2)],a)
+Set{l_algebra_element} with 1 element:
+  l_algebra_element(l_algebra([2 2; 1 2]), 2)
 ```
 """
-function ideal_generated_by(S::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}}, a::LAlgebra)
+function ideal_generated_by(S::Union{Set{l_algebra_element}, Vector{l_algebra_element}}, a::l_algebra)
     T = Set([logical_unit(a)])
     S = Set(S)
     L = elements(a)
@@ -928,11 +928,11 @@ function ideal_generated_by(S::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}}, a
     return T
 end
 
-function ideal_generated_by(x::LAlgebraElem, a::LAlgebra)
+function ideal_generated_by(x::l_algebra_element, a::l_algebra)
     return ideal_generated_by([x],a)
 end
 
-function  ideals(a::LAlgebra)
+function  ideals(a::l_algebra)
     n = size(a)
     l = []
     for S in subsets(elements(a))
@@ -944,36 +944,36 @@ function  ideals(a::LAlgebra)
 end
 
 """
-    onlyvalues_ideals(a::LAlgebra) -> Vector{Vector{Int}}
+    onlyvalues_ideals(a::l_algebra) -> Vector{Vector{Int}}
 
 Return all ideals of the L-algebra `a`, represented by their element values.
 
 # Arguments
-- `a::LAlgebra`: The L-algebra.
+- `a::l_algebra`: The L-algebra.
 
 # Returns
 - `Vector{Vector{Int}}`: All ideals by values.
 
 # Examples
 ```jldoctest
-julia> A = LAlgebra([2 2; 1 2]);
+julia> A = l_algebra([2 2; 1 2]);
 julia> onlyvalues_ideals(A)
 2-element Vector{Vector{Int64}}:
  [2]
  [1, 2]
 """
-function onlyvalues_ideals(a::LAlgebra)
+function onlyvalues_ideals(a::l_algebra)
     S =  ideals(a)
     return [[x[i].value for i in 1:length(x)] for x in S]
 end
 
 """
-    ⋅(I::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}},J::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}})
+    ⋅(I::Union{Set{l_algebra_element}, Vector{l_algebra_element}},J::Union{Set{l_algebra_element}, Vector{l_algebra_element}})
 
 Return the LAlgbera product on ideals I⋅J={a∈X : ⟨a⟩∩I ⊆ J}.
 """
-function ⋅(I::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}},J::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}})
-    res = Set{LAlgebraElem}()  
+function ⋅(I::Union{Set{l_algebra_element}, Vector{l_algebra_element}},J::Union{Set{l_algebra_element}, Vector{l_algebra_element}})
+    res = Set{l_algebra_element}()  
     if !(allequal([I[i].algebra for i in 1:length(I)]))
         return error("elements in $I are not all in the same l-algebra")
     end
@@ -1009,7 +1009,7 @@ function ⋅(I::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}},J::Union{Set{LAlg
     return res
 end 
 
-function is_prime_ideal(p::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}}, a::LAlgebra)
+function is_prime_ideal(p::Union{Set{l_algebra_element}, Vector{l_algebra_element}}, a::l_algebra)
     if !is_ideal(p,a) || length(p) == size(a)
         return false
     end
@@ -1025,72 +1025,72 @@ function is_prime_ideal(p::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}}, a::LA
 end
 
 																				"""
-    spec(a::LAlgebra) -> Vector{Set{LAlgebraElem}}
+    spec(a::l_algebra) -> Vector{Set{l_algebra_element}}
 
 Return the set of all prime ideals of the L-algebra `a`.
 
 # Arguments
-- `a::LAlgebra`: The L-algebra.
+- `a::l_algebra`: The L-algebra.
 
 # Returns
-- `Vector{Set{LAlgebraElem}}`: All prime ideals.
+- `Vector{Set{l_algebra_element}}`: All prime ideals.
 
 # Examples
 ```jldoctest
-julia> A = LAlgebra([2 2; 1 2]);
+julia> A = l_algebra([2 2; 1 2]);
 julia> spec(A)
 1-element Vector{Any}:
- LAlgebraElem[LAlgebraElem(LAlgebra([2 2; 1 2]), 2)]
+ l_algebra_element[l_algebra_element(l_algebra([2 2; 1 2]), 2)]
 """
-function spec(a::LAlgebra)
+function spec(a::l_algebra)
     filter(p->is_prime_ideal(p,a), ideals(a))
 end
 
 
 """
-    onlyvalues_spec(a::LAlgebra) -> Vector{Vector{Int}}
+    onlyvalues_spec(a::l_algebra) -> Vector{Vector{Int}}
 
 Return the set of all prime ideals of `a`, represented by their element values.
 
 # Arguments
-- `a::LAlgebra`: The L-algebra.
+- `a::l_algebra`: The L-algebra.
 
 # Returns
 - `Vector{Vector{Int}}`: All prime ideals by values.
 
 # Examples
 ```jldoctest
-julia> A = LAlgebra([2 2; 1 2]);
+julia> A = l_algebra([2 2; 1 2]);
 julia> onlyvalues_spec(A)
 1-element Vector{Vector{Int64}}:
  [2]
 """
-function onlyvalues_spec(a::LAlgebra)
+function onlyvalues_spec(a::l_algebra)
     S = spec(a)
     return [[x[i].value for i in 1:length(x)] for x in S]
 end
 
 
 """
-    dirprod(a::LAlgebra, b::LAlgebra) -> LAlgebra
+    dirprod(a::l_algebra, b::l_algebra) -> l_algebra
 
 Return the direct product of two L-algebras `a` and `b`.
 
 # Arguments
-- `a::LAlgebra`: The first L-algebra.
-- `b::LAlgebra`: The second L-algebra.
+- `a::l_algebra`: The first L-algebra.
+- `b::l_algebra`: The second L-algebra.
 
 # Returns
-- `LAlgebra`: The direct product of `a` and `b`.
+- `l_algebra`: The direct product of `a` and `b`.
 
 # Examples
 ```jldoctest
-julia> A = LAlgebra([2 2; 1 2]);
-julia> B = LAlgebra([2 2; 1 2]);
+julia> A = l_algebra([2 2; 1 2]);
+julia> B = l_algebra([2 2; 1 2]);
 julia> dirprod(A,B)
-LAlgebra([4 4 4 4; 3 4 3 4; 2 2 4 4; 1 2 3 4])
+l_algebra([4 4 4 4; 3 4 3 4; 2 2 4 4; 1 2 3 4])
 """
-function dirprod(a::LAlgebra,b::LAlgebra)
+function dirprod(a::l_algebra,b::l_algebra)
     n = size(a)
     m = size(b)
     s = m * n
@@ -1104,56 +1104,56 @@ function dirprod(a::LAlgebra,b::LAlgebra)
         d = (b1*b2).value
         A[m*(a1.value -1)+b1.value ,m*(a2.value -1)+b2.value ] = m*(c-1)+d
     end
-    return LAlgebra(A) #do we want it in the normal_form?
+    return l_algebra(A) #do we want it in the normal_form?
 end
 
 """
-    normalized_dirprod(a::LAlgebra, b::LAlgebra) -> LAlgebra
+    normalized_dirprod(a::l_algebra, b::l_algebra) -> l_algebra
 
 Return the direct product of two L-algebras `a` and `b`, then normalize it
 so that the resulting L-algebra is in canonical order (normal form).
 
 # Arguments
-- `a::LAlgebra`: The first L-algebra.
-- `b::LAlgebra`: The second L-algebra.
+- `a::l_algebra`: The first L-algebra.
+- `b::l_algebra`: The second L-algebra.
 
 # Returns
-- `LAlgebra`: The normalized direct product.
+- `l_algebra`: The normalized direct product.
 
 # Examples
 ```jldoctest
-julia> A = LAlgebra([2 2; 1 2]);
-julia> B = LAlgebra([3 3 3; 1 3 3; 1 2 3])
+julia> A = l_algebra([2 2; 1 2]);
+julia> B = l_algebra([3 3 3; 1 3 3; 1 2 3])
 julia> dirprod(A,B)
-LAlgebra([ 6  6  6  6  6  6; 4  6  6  4  6  6;; 4  5  6  4  5  6; 3  3  3  6  6  6; 1  3  3  4  6  6; 1  2  3  4  5  6])
+l_algebra([ 6  6  6  6  6  6; 4  6  6  4  6  6;; 4  5  6  4  5  6; 3  3  3  6  6  6; 1  3  3  4  6  6; 1  2  3  4  5  6])
 julia> normalized_dirprod(A,B)
-LAlgebra([ 6  6  6  6  6  6; 3  6  3  6  6  6; 4  4  6  4  6  6; 3  5  3  6  5  6; 1  4  3  4  6  6; 1  2  3  4  5  6])
+l_algebra([ 6  6  6  6  6  6; 3  6  3  6  6  6; 4  4  6  4  6  6; 3  5  3  6  5  6; 1  4  3  4  6  6; 1  2  3  4  5  6])
 """
-function normalized_dirprod(a::LAlgebra,b::LAlgebra)
+function normalized_dirprod(a::l_algebra,b::l_algebra)
     return normal_form(dirprod(a, b))
 end
 
 """
-    direct_product(a1::LAlgebra, a2::LAlgebra, ...) -> LAlgebra
+    direct_product(a1::l_algebra, a2::l_algebra, ...) -> l_algebra
 
 Return the direct product of several L-algebras.
 
 # Arguments
-- `a1::LAlgebra, a2::LAlgebra, ...`: L-algebras to be combined.
+- `a1::l_algebra, a2::l_algebra, ...`: L-algebras to be combined.
 
 # Returns
-- `LAlgebra`: The direct product of the given L-algebras.
+- `l_algebra`: The direct product of the given L-algebras.
 
 # Examples
 ```jldoctest
-julia> A = LAlgebra([2 2; 1 2]);
-julia> B = LAlgebra([2 2; 1 2]);
-julia> C = LAlgebra([2 2; 1 2]);
+julia> A = l_algebra([2 2; 1 2]);
+julia> B = l_algebra([2 2; 1 2]);
+julia> C = l_algebra([2 2; 1 2]);
 julia> direct_product(A,B,C)
-LAlgebra([8  8  8  8  8  8  8  8; 7  8  7  8  7  8  7  8; 6  6  8  8  6  6  8  8; 5  6  7  8  5  6  7  8; 4  4  4  4  8  8  8  8; 3  4  3  4  7  8  7  8; 2  2  4  4  6  6  8  8; 1  2  3  4  5  6  7  8])
+l_algebra([8  8  8  8  8  8  8  8; 7  8  7  8  7  8  7  8; 6  6  8  8  6  6  8  8; 5  6  7  8  5  6  7  8; 4  4  4  4  8  8  8  8; 3  4  3  4  7  8  7  8; 2  2  4  4  6  6  8  8; 1  2  3  4  5  6  7  8])
 """
-function direct_product((arg::LAlgebra)...)
-    LA = LAlgebra([1;;])
+function direct_product((arg::l_algebra)...)
+    LA = l_algebra([1;;])
     for (i,a) in enumerate(arg)
         LA = dirprod(LA,a)
     end
@@ -1161,58 +1161,58 @@ function direct_product((arg::LAlgebra)...)
 end
 
 """
-    normalized_direct_prod(a1::LAlgebra, a2::LAlgebra, ...) -> LAlgebra
+    normalized_direct_prod(a1::l_algebra, a2::l_algebra, ...) -> l_algebra
 
 Return the direct product of several L-algebras `a1` and `a2`..., then normalize it
 so that the resulting L-algebra is in canonical order (normal form).
 
 # Arguments
-- `a1::LAlgebra, a2::LAlgebra, ...`: L-algebras to be combined.
+- `a1::l_algebra, a2::l_algebra, ...`: L-algebras to be combined.
 
 # Returns
-- `LAlgebra`: The normalized form of the direct product.
+- `l_algebra`: The normalized form of the direct product.
 
 # Examples
 ```jldoctest
-julia> A = LAlgebra([2 2; 1 2]);
-julia> B = LAlgebra([2 2; 1 2]);
-julia> C = LAlgebra([3 3 3; 1 3 3; 1 2 3])
+julia> A = l_algebra([2 2; 1 2]);
+julia> B = l_algebra([2 2; 1 2]);
+julia> C = l_algebra([3 3 3; 1 3 3; 1 2 3])
 julia> direct_product(A,B,C)
-LAlgebra([12  12  12  12  12  12  12  12  12  12  12  12; 10  12  12  10  12  12  10  12  12  10  12  12; 10  11  12  10  11  12  10  11  12  10  11  12;  9   9   9  12  12  12   9   9   9  12  12  12;  7   9   9  10  12  12   7   9   9  10  12  12;  7   8   9  10  11  12   7   8   9  10  11  12;  6   6   6   6   6   6  12  12  12  12  12  12;  4   6   6   4   6   6  10  12  12  10  12  12;  4   5   6   4   5   6  10  11  12  10  11  12;  3   3   3   6   6   6   9   9   9  12  12  12;  1   3   3   4   6   6   7   9   9  10  12  12;  1   2   3   4   5   6   7   8   9  10  11  12])
+l_algebra([12  12  12  12  12  12  12  12  12  12  12  12; 10  12  12  10  12  12  10  12  12  10  12  12; 10  11  12  10  11  12  10  11  12  10  11  12;  9   9   9  12  12  12   9   9   9  12  12  12;  7   9   9  10  12  12   7   9   9  10  12  12;  7   8   9  10  11  12   7   8   9  10  11  12;  6   6   6   6   6   6  12  12  12  12  12  12;  4   6   6   4   6   6  10  12  12  10  12  12;  4   5   6   4   5   6  10  11  12  10  11  12;  3   3   3   6   6   6   9   9   9  12  12  12;  1   3   3   4   6   6   7   9   9  10  12  12;  1   2   3   4   5   6   7   8   9  10  11  12])
 julia> normalized_direct_product(A,B,C)
-LAlgebra([12  12  12  12  12  12  12  12  12  12  12  12; 10  12  12  10  12  12  10  12  12  10  12  12; 10  11  12  10  11  12  10  11  12  10  11  12;  9   9   9  12  12  12   9   9   9  12  12  12;  7   9   9  10  12  12   7   9   9  10  12  12;  7   8   9  10  11  12   7   8   9  10  11  12;  6   6   6   6   6   6  12  12  12  12  12  12;  4   6   6   4   6   6  10  12  12  10  12  12;  4   5   6   4   5   6  10  11  12  10  11  12;  3   3   3   6   6   6   9   9   9  12  12  12;  1   3   3   4   6   6   7   9   9  10  12  12;  1   2   3   4   5   6   7   8   9  10  11  12])
+l_algebra([12  12  12  12  12  12  12  12  12  12  12  12; 10  12  12  10  12  12  10  12  12  10  12  12; 10  11  12  10  11  12  10  11  12  10  11  12;  9   9   9  12  12  12   9   9   9  12  12  12;  7   9   9  10  12  12   7   9   9  10  12  12;  7   8   9  10  11  12   7   8   9  10  11  12;  6   6   6   6   6   6  12  12  12  12  12  12;  4   6   6   4   6   6  10  12  12  10  12  12;  4   5   6   4   5   6  10  11  12  10  11  12;  3   3   3   6   6   6   9   9   9  12  12  12;  1   3   3   4   6   6   7   9   9  10  12  12;  1   2   3   4   5   6   7   8   9  10  11  12])
 """
-function normalized_direct_prod((arg::LAlgebra)...)
-    return normal_form(direct_prod((arg::LAlgebra)...))
+function normalized_direct_prod((arg::l_algebra)...)
+    return normal_form(direct_prod((arg::l_algebra)...))
 end
 
 """
-    endomorphisms(a::LAlgebra) -> Vector{Vector{LAlgebraElem}}
+    endomorphisms(a::l_algebra) -> Vector{Vector{l_algebra_element}}
 
 Return the set of all endomorphisms of the L-algebra `a`.
 
 # Arguments
-- `a::LAlgebra`: The L-algebra.
+- `a::l_algebra`: The L-algebra.
 
 # Returns
-- `Vector{Vector{LAlgebraElem}}`: All endomorphisms of `a`.
+- `Vector{Vector{l_algebra_element}}`: All endomorphisms of `a`.
 
 # Examples
 ```jldoctest
-julia> A = LAlgebra([2 2; 1 2]);
+julia> A = l_algebra([2 2; 1 2]);
 julia> endomorphisms(A)
 2-element Vector{Any}:
- LAlgebraElem[LAlgebraElem(LAlgebra([2 2; 1 2]), 1), LAlgebraElem(LAlgebra([2 2; 1 2]), 2)]
- LAlgebraElem[LAlgebraElem(LAlgebra([2 2; 1 2]), 2), LAlgebraElem(LAlgebra([2 2; 1 2]), 2)]
+ l_algebra_element[l_algebra_element(l_algebra([2 2; 1 2]), 1), l_algebra_element(l_algebra([2 2; 1 2]), 2)]
+ l_algebra_element[l_algebra_element(l_algebra([2 2; 1 2]), 2), l_algebra_element(l_algebra([2 2; 1 2]), 2)]
 """
-function endomorphisms(a::LAlgebra)
+function endomorphisms(a::l_algebra)
 	m=size(a)
 	en = []
 	for t in Iterators.product(ntuple(_ -> 1:m, m-1)...)
 		s=[i for i in t]
 		append!(s,m)
-		f=map(x->LAlgebraElem(a,s[x]),1:m)
-	if is_LAlgebraMor(a,a,f)
+		f=map(x->l_algebra_element(a,s[x]),1:m)
+	if is_l_algebra_morphism(a,a,f)
 		append!(en,[f])
     end	
 	end
@@ -1220,51 +1220,51 @@ return en
 end 
 
 """
-    onlyvalues_endomorphisms(a::LAlgebra) -> Vector{Vector{Int}}
+    onlyvalues_endomorphisms(a::l_algebra) -> Vector{Vector{Int}}
 
 Return the set of all endomorphisms of `a` by their element values.
 
 # Arguments
-- `a::LAlgebra`: The L-algebra.
+- `a::l_algebra`: The L-algebra.
 
 # Returns
 - `Vector{Vector{Int}}`: A vector of endomorphisms represented by their values.
 
 # Examples
 ```jldoctest
-julia> A = LAlgebra([2 2; 1 2]);
+julia> A = l_algebra([2 2; 1 2]);
 julia> onlyvalues_endomorphisms(A)
 2-element Vector{Vector{Int64}}:
  [1, 2]
  [2, 2]
 """																				
-function onlyvalues_endomorphisms(a::LAlgebra)
+function onlyvalues_endomorphisms(a::l_algebra)
     E = endomorphisms(a)
     return [[x[i].value for i in 1:length(x)] for x in E]
 end
 
 """
-    is_action(a::LAlgebra, b::LAlgebra, rho::Vector{Vector{LAlgebraElem}}) -> Bool
+    is_action(a::l_algebra, b::l_algebra, rho::Vector{Vector{l_algebra_element}}) -> Bool
 
 Check whether `rho` defines an action of `a` on `b`.
 
 # Arguments
-- `a::LAlgebra`: The acting L-algebra.
-- `b::LAlgebra`: The L-algebra being acted on.
-- `rho::Vector{Vector{LAlgebraElem}}`: The action maps.
+- `a::l_algebra`: The acting L-algebra.
+- `b::l_algebra`: The L-algebra being acted on.
+- `rho::Vector{Vector{l_algebra_element}}`: The action maps.
 
 # Returns
 - `Bool`: `true` if `rho` defines a valid action, `false` otherwise.
 
 # Examples
 ```jldoctest
-julia> A = LAlgebra([2 2; 1 2]);
-julia> B = LAlgebra([2 2; 1 2]);
-julia> rho = [[LAlgebraElem(B,1), LAlgebraElem(B,2)], [LAlgebraElem(B,1), LAlgebraElem(B,2)]];
+julia> A = l_algebra([2 2; 1 2]);
+julia> B = l_algebra([2 2; 1 2]);
+julia> rho = [[l_algebra_element(B,1), l_algebra_element(B,2)], [l_algebra_element(B,1), l_algebra_element(B,2)]];
 julia> is_action(A,B,rho)
 true
 """
-function is_action(a::LAlgebra, b::LAlgebra, rho::Vector{Vector{LAlgebraElem}})
+function is_action(a::l_algebra, b::l_algebra, rho::Vector{Vector{l_algebra_element}})
 	n = size(a)
 	m = size(b)
     k = length(rho)
@@ -1274,12 +1274,12 @@ function is_action(a::LAlgebra, b::LAlgebra, rho::Vector{Vector{LAlgebraElem}})
 	 
 	for i in 1:n
         t = rho[i]
-        if !is_LAlgebraMor(b,b,rho[i])
+        if !is_l_algebra_morphism(b,b,rho[i])
             return error("$rho is not an action: $t is not an l-algebra morphism")
      	end
 	end
 
-	id = map(x->LAlgebraElem(b,x), 1:m)
+	id = map(x->l_algebra_element(b,x), 1:m)
     	u = logical_unit(a)
 	if rho[u.value] != id 
        	 return error("$rho is not an action: the logical unit does not act trivially")
@@ -1296,27 +1296,27 @@ return true
 end
 
 																					"""
-    semidirect_prod(a::LAlgebra, b::LAlgebra, rho::Vector{Vector{LAlgebraElem}}) -> LAlgebra
+    semidirect_prod(a::l_algebra, b::l_algebra, rho::Vector{Vector{l_algebra_element}}) -> l_algebra
 
 Return the semidirect product of `a` and `b` with respect to the action `rho`.
 
 # Arguments
-- `a::LAlgebra`: The L-algebra providing the action.
-- `b::LAlgebra`: The L-algebra being acted on.
-- `rho::Vector{Vector{LAlgebraElem}}`: The action maps.
+- `a::l_algebra`: The L-algebra providing the action.
+- `b::l_algebra`: The L-algebra being acted on.
+- `rho::Vector{Vector{l_algebra_element}}`: The action maps.
 
 # Returns
-- `LAlgebra`: The semidirect product.
+- `l_algebra`: The semidirect product.
 
 # Examples
 ```jldoctest
-julia> A = LAlgebra([2 2; 1 2]);
-julia> B = LAlgebra([2 2; 1 2]);
-julia> rho = [[LAlgebraElem(B,1), LAlgebraElem(B,2)], [LAlgebraElem(B,1), LAlgebraElem(B,2)]];
+julia> A = l_algebra([2 2; 1 2]);
+julia> B = l_algebra([2 2; 1 2]);
+julia> rho = [[l_algebra_element(B,1), l_algebra_element(B,2)], [l_algebra_element(B,1), l_algebra_element(B,2)]];
 julia> semidirect_prod(A,B,rho)
-LAlgebra([4 4 4 4; 3 4 3 4; 2 2 4 4; 1 2 3 4])
+l_algebra([4 4 4 4; 3 4 3 4; 2 2 4 4; 1 2 3 4])
 """
-function semidirect_prod(a::LAlgebra, b::LAlgebra, rho::Vector{Vector{LAlgebraElem}})
+function semidirect_prod(a::l_algebra, b::l_algebra, rho::Vector{Vector{l_algebra_element}})
 	n = size(a)
 	m = size(b)
 	s = m * n
@@ -1331,12 +1331,12 @@ function semidirect_prod(a::LAlgebra, b::LAlgebra, rho::Vector{Vector{LAlgebraEl
 		d = (b1*b2).value
 		M[m*(a1.value-1)+b1.value, m*(a2.value-1)+b2.value ] = m*(c-1)+d
 	end
-	return LAlgebra(M) #do we want it in the normal_form?
+	return l_algebra(M) #do we want it in the normal_form?
 end
 
 
 """
-    normal_form(a::LAlgebra) -> LAlgebra
+    normal_form(a::l_algebra) -> l_algebra
 
 Compute the normal form of the L-algebra `a`, where the order of indices in the resulting matrix
 matches the canonical order derived from the counts of the leading unit element.
@@ -1346,21 +1346,21 @@ elements with similar structural properties (based on counts of the leading unit
 are grouped together.
 
 # Arguments
-- `a::LAlgebra`: The input L-algebra.
+- `a::l_algebra`: The input L-algebra.
 
 # Returns
-- `LAlgebra`: A new L-algebra in its normal form.
+- `l_algebra`: A new L-algebra in its normal form.
 
 # Examples
 ```jldoctest
-julia> A = LAlgebra([2 2; 1 2]);
+julia> A = l_algebra([2 2; 1 2]);
 julia> normal_form(A)
-LAlgebra([2 2; 1 2])
-julia> B = LAlgebra([2 2 3; 1 2 3; 2 2 2]);
+l_algebra([2 2; 1 2])
+julia> B = l_algebra([2 2 3; 1 2 3; 2 2 2]);
 julia> normal_form(B)
-LAlgebra([3 3 3; 1 3 3; 1 2 3])
+l_algebra([3 3 3; 1 3 3; 1 2 3])
 """
-function normal_form(a::LAlgebra) # order of indices fits in the order of LAlgebra
+function normal_form(a::l_algebra) # order of indices fits in the order of l_algebra
     M = a.matrix
     n = size(a)
     lu = M[1,1]
@@ -1371,5 +1371,5 @@ function normal_form(a::LAlgebra) # order of indices fits in the order of LAlgeb
 
     N = j[M[v,v]]
 
-    return LAlgebra(N)
+    return l_algebra(N)
 end

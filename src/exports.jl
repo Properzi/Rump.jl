@@ -2,7 +2,7 @@
 export greet_Rump
 export check_LAlgebra
 export LAlgebra
-export LAlgebraElem
+export l_algebra_element
 export print
 export ==
 export *
@@ -12,8 +12,8 @@ export size
 export length
 export logical_unit
 export !=
-export is_LAlgebraMor
-export LAlgebraMor
+export is_l_algebra_morphism
+export l_algebra_morphism
 export <=
 export <
 export >=
