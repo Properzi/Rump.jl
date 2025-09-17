@@ -800,7 +800,7 @@ end
 """
     is_invariant(s::Union{Set{LAlgebraElem}, Vector{LAlgebraElem}}, a::LAlgebra)
  
-Check if s (either a subset or a vector of eleemtns of a),
+Check if s (either a subset or a vector of elements of a),
      is closed under the operation of a.
 # Examples
 ```jldoctest
@@ -1182,8 +1182,8 @@ LAlgebra([12  12  12  12  12  12  12  12  12  12  12  12; 10  12  12  10  12  12
 julia> normalized_direct_product(A,B,C)
 LAlgebra([12  12  12  12  12  12  12  12  12  12  12  12; 10  12  12  10  12  12  10  12  12  10  12  12; 10  11  12  10  11  12  10  11  12  10  11  12;  9   9   9  12  12  12   9   9   9  12  12  12;  7   9   9  10  12  12   7   9   9  10  12  12;  7   8   9  10  11  12   7   8   9  10  11  12;  6   6   6   6   6   6  12  12  12  12  12  12;  4   6   6   4   6   6  10  12  12  10  12  12;  4   5   6   4   5   6  10  11  12  10  11  12;  3   3   3   6   6   6   9   9   9  12  12  12;  1   3   3   4   6   6   7   9   9  10  12  12;  1   2   3   4   5   6   7   8   9  10  11  12])
 """
-function normalized_dirprod(a::LAlgebra,b::LAlgebra)
-    return normal_form(dirprod(a, b))
+function normalized_direct_prod(a1::LAlgebra, a2::LAlgebra, ...)
+    return normal_form(direct_prod(a1::LAlgebra, a2::LAlgebra, ...))
 end
 
 """

@@ -48,8 +48,11 @@ export is_prime_ideal
 export ideals
 export onlyvalues_ideals
 export dirprod
+export normalized_dirprod
 export direct_product
+export normalized_direct_prod
 export endomorphisms
+export onlyvalues_endomorphisms
 export is_action
 export semidirect_prod
 export normal_form
