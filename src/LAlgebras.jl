@@ -1182,8 +1182,8 @@ LAlgebra([12  12  12  12  12  12  12  12  12  12  12  12; 10  12  12  10  12  12
 julia> normalized_direct_product(A,B,C)
 LAlgebra([12  12  12  12  12  12  12  12  12  12  12  12; 10  12  12  10  12  12  10  12  12  10  12  12; 10  11  12  10  11  12  10  11  12  10  11  12;  9   9   9  12  12  12   9   9   9  12  12  12;  7   9   9  10  12  12   7   9   9  10  12  12;  7   8   9  10  11  12   7   8   9  10  11  12;  6   6   6   6   6   6  12  12  12  12  12  12;  4   6   6   4   6   6  10  12  12  10  12  12;  4   5   6   4   5   6  10  11  12  10  11  12;  3   3   3   6   6   6   9   9   9  12  12  12;  1   3   3   4   6   6   7   9   9  10  12  12;  1   2   3   4   5   6   7   8   9  10  11  12])
 """
-function normalized_direct_prod(a1::LAlgebra, a2::LAlgebra, ...)
-    return normal_form(direct_prod(a1::LAlgebra, a2::LAlgebra, ...))
+function normalized_direct_prod((arg::LAlgebra)...)
+    return normal_form(direct_prod((arg::LAlgebra)...))
 end
 
 """
