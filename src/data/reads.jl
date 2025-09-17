@@ -21,18 +21,19 @@ end
 
 
 
-function small_l_algebras(n,k)
+function small_l_algebra(n,k)
+    dir=pwd()
     if n == 1
         if k != 1
             error("there is only 1 L-algebra of size 1")
         end
-        return LAlgebra(hcat(1))
+        return l_algebra(hcat(1))
     end
     if n == 2
         if k != 1
             error("there is only 1 L-algebra of size 2")
         end
-        return LAlgebra([2 2; 1 2])
+        return l_algebra([2 2; 1 2])
     end
     cd(@__DIR__)
     if !isdir("LA$n")
@@ -72,7 +73,7 @@ function small_l_algebras(n,k)
             end
             r = chop(chop(g))
             M = eval(Meta.parse(r))
-            return LAlgebra(M)
+            return l_algebra(M)
         end
         
         
@@ -83,7 +84,7 @@ function small_l_algebras(n,k)
         end
         r = chop(chop(g))
         M = eval(Meta.parse(r))
-        return LAlgebra(M)
+        return l_algebra(M)
     end
 
     if i != 1
@@ -99,7 +100,7 @@ function small_l_algebras(n,k)
         end
         r = chop(chop(g))
         M = eval(Meta.parse(r))
-        return LAlgebra(M)
+        return l_algebra(M)
     end
     open("LA$n"*"_$i.jl") do f
         for j in 1:(k-prev)+1
@@ -108,5 +109,6 @@ function small_l_algebras(n,k)
     end
     r = chop(chop(g))
     M = eval(Meta.parse(r))
-    return LAlgebra(M)
+    cd(dir)
+    return l_algebra(M)
 end
