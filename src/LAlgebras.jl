@@ -1400,3 +1400,6 @@ function normal_form(a::l_algebra) # order of indices fits in the order of l_alg
 
     return l_algebra(N)
 end
+
+
+

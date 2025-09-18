@@ -73,6 +73,7 @@ function small_l_algebra(n,k)
             end
             r = chop(chop(g))
             M = eval(Meta.parse(r))
+            cd(dir)
             return l_algebra(M)
         end
         
@@ -84,6 +85,7 @@ function small_l_algebra(n,k)
         end
         r = chop(chop(g))
         M = eval(Meta.parse(r))
+        cd(dir)
         return l_algebra(M)
     end
 
@@ -100,6 +102,7 @@ function small_l_algebra(n,k)
         end
         r = chop(chop(g))
         M = eval(Meta.parse(r))
+        cd(dir)
         return l_algebra(M)
     end
     open("LA$n"*"_$i.jl") do f
